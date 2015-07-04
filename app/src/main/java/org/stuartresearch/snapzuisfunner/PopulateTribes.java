@@ -23,6 +23,9 @@ public class PopulateTribes extends AsyncTask<Void, Void, Tribe[]> {
 
     @Override
     protected void onPostExecute(Tribe[] tribes) {
+        for (int i = 5; i < drawer.getDrawerItems().size(); i++) {
+            drawer.removeItem(i);
+        }
         for (int i = 0; i < tribes.length; i++) {
             drawer.addItem(new SecondaryDrawerItem().withName(tribes[i].getName()));
         }
