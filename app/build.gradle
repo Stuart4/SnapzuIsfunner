@@ -37,4 +37,5 @@ dependencies {
     compile('com.mikepenz:materialdrawer:3.0.9@aar') {
         transitive = true
     }
+    compile files('libs/SnapzuAPI.jar')
 }

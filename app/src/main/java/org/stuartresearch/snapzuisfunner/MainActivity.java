@@ -1,21 +1,45 @@
 package org.stuartresearch.snapzuisfunner;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
+
+    @Bind(R.id.toolbar) Toolbar toolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        new DrawerBuilder().withActivity(this).withTranslucentStatusBar(false).build();
+        setSupportActionBar(toolbar);
+
+        Drawer result = new DrawerBuilder().withActivity(this).withTranslucentStatusBar(false)
+                .withActionBarDrawerToggle(true)
+                .withToolbar(toolbar)
+                .addDrawerItems(
+                        new PrimaryDrawerItem().withName("I am first!"),
+                        new DividerDrawerItem(),
+                        new SecondaryDrawerItem().withName("Second!")
+                ).build();
+
+        result.openDrawer();
+        result.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
 
     }
 
