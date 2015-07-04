@@ -10,7 +10,6 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -19,6 +18,8 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
+
+    Drawer drawer;
 
 
     @Override
@@ -29,17 +30,23 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
 
-        Drawer result = new DrawerBuilder().withActivity(this).withTranslucentStatusBar(false)
+        drawer = new DrawerBuilder().withActivity(this).withTranslucentStatusBar(false)
                 .withActionBarDrawerToggle(true)
                 .withToolbar(toolbar)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName("I am first!"),
-                        new DividerDrawerItem(),
-                        new SecondaryDrawerItem().withName("Second!")
+                        new PrimaryDrawerItem().withName("Profile").withIcon(R.drawable.ic_account_box_black_18dp),
+                        new PrimaryDrawerItem().withName("Messages").withIcon(R.drawable.ic_message_black_18dp),
+                        new PrimaryDrawerItem().withName("User").withIcon(R.drawable.ic_group_black_18dp),
+                        new PrimaryDrawerItem().withName("Tribe").withIcon(R.drawable.ic_filter_tilt_shift_black_18dp),
+                        new DividerDrawerItem()
+                )
+                .addStickyDrawerItems(
+                        new PrimaryDrawerItem().withName("Settings").withIcon(R.drawable.ic_settings_black_18dp)
                 ).build();
 
-        result.openDrawer();
-        result.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+        drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+
+        new PopulateTribes(drawer).execute();
 
     }
 
