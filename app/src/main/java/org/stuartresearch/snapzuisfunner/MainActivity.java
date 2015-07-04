@@ -6,6 +6,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.etsy.android.grid.StaggeredGridView;
 import com.mikepenz.materialdrawer.Drawer;
@@ -15,13 +17,15 @@ import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerItemClickListener,
+        AccountHeader.OnAccountHeaderListener{
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.grid_view) StaggeredGridView gridView;
@@ -42,14 +46,15 @@ public class MainActivity extends AppCompatActivity {
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)
                 .addProfiles(
-                        new ProfileDrawerItem().withName("SubZeroJake").withEmail("jake@spacejake.com").withIcon(getResources().getDrawable(R.drawable.profile))
+                        new ProfileDrawerItem().withName("SubZeroJake").withEmail("jake@spacejake.com").withIcon(getResources().getDrawable(R.drawable.profile)),
+                        new ProfileDrawerItem().withName("vexix11").withEmail("the_jake@sbcglobal.net")
                 )
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
                         return false;
                     }
-                })
+                }).withOnAccountHeaderListener(this)
                 .build();
 
 
@@ -66,7 +71,8 @@ public class MainActivity extends AppCompatActivity {
                 )
                 .addStickyDrawerItems(
                         new PrimaryDrawerItem().withName("Settings").withIcon(R.drawable.ic_settings_black_18dp)
-                ).build();
+                ).withOnDrawerItemClickListener(this)
+                .build();
 
         drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
 
@@ -89,13 +95,18 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_sort) {
+            Toast.makeText(this, "Sort not implemented.", Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (id == R.id.action_compose) {
+            Toast.makeText(this, "Compose not implemented.", Toast.LENGTH_SHORT).show();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    // CLOSE DRAWER ON BACK
     @Override
     public void onBackPressed() {
         if (drawer != null && drawer.isDrawerOpen()) {
@@ -103,5 +114,45 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    // DRAWER CLICKED
+    @Override
+    public boolean onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
+        switch(i) {
+            // Profile
+            case 0:
+                Toast.makeText(this, "Profile is not implemented", Toast.LENGTH_SHORT).show();
+                break;
+            // Messages
+            case 1:
+                Toast.makeText(this, "Messages is not implemented", Toast.LENGTH_SHORT).show();
+                break;
+            // Open User
+            case 2:
+                Toast.makeText(this, "Open User is not implemented", Toast.LENGTH_SHORT).show();
+                break;
+            // Open Tribe
+            case 3:
+                Toast.makeText(this, "Open Tribe not implemented", Toast.LENGTH_SHORT).show();
+                break;
+            // Settings
+            case -1:
+                Toast.makeText(this, "Settings is not implemented", Toast.LENGTH_SHORT).show();
+                break;
+            // Tribe Selected
+            default:
+                Toast.makeText(this, "Tribe Selection is not implemented", Toast.LENGTH_SHORT).show();
+                break;
+
+        }
+        return false;
+    }
+
+    // ACCOUNT SELECTED
+    @Override
+    public boolean onProfileChanged(View view, IProfile iProfile, boolean b) {
+        Toast.makeText(this, String.format("Almost logged in as %s", iProfile.getName()), Toast.LENGTH_SHORT).show();
+        return false;
     }
 }
