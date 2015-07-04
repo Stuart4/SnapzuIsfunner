@@ -25,10 +25,11 @@ import org.stuartresearch.SnapzuAPI.Tribe;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnItemClick;
 
 
 public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerItemClickListener,
-        AccountHeader.OnAccountHeaderListener{
+        AccountHeader.OnAccountHeaderListener {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.grid_view) StaggeredGridView gridView;
@@ -176,5 +177,10 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
     public static void setTribes(Tribe[] tribes) {
         MainActivity.tribes = tribes;
+    }
+
+    @OnItemClick(R.id.grid_view)
+    public void grid_selected(int position) {
+        Toast.makeText(this, String.format("Post selection (%d) is not implemented", position), Toast.LENGTH_SHORT).show();
     }
 }
