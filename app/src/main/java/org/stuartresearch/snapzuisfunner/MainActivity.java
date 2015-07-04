@@ -20,6 +20,7 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
+import org.stuartresearch.SnapzuAPI.Post;
 import org.stuartresearch.SnapzuAPI.Tribe;
 
 import butterknife.Bind;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
         setSupportActionBar(toolbar);
 
+        // Build account header
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)
@@ -60,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 }).withOnAccountHeaderListener(this)
                 .build();
 
-
+        // Build drawer
         drawer = new DrawerBuilder().withActivity(this).withTranslucentStatusBar(false)
                 .withActionBarDrawerToggle(true)
                 .withToolbar(toolbar)
@@ -77,7 +79,17 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 ).withOnDrawerItemClickListener(this)
                 .build();
 
+        //Make hamburger appear and function
         drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+
+        //Gridview business
+        Post[] posts = new Post[3];
+        posts[0] = new Post();
+        posts[1] = new Post();
+        posts[2] = new Post();
+        GridAdapter mAdapter = new GridAdapter(this, R.layout.grid_item, posts);
+        gridView.setAdapter(mAdapter);
+
 
         new PopulateTribes(drawer).execute();
 
