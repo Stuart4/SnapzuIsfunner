@@ -20,6 +20,8 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
+import org.stuartresearch.SnapzuAPI.Tribe;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -31,7 +33,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     @Bind(R.id.grid_view) StaggeredGridView gridView;
 
 
-    Drawer drawer;
+    static Drawer drawer;
+    static Tribe[] tribes;
 
 
     @Override
@@ -142,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 break;
             // Tribe Selected
             default:
-                Toast.makeText(this, "Tribe Selection is not implemented", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, String.format("Tribe Selection (%s) is not implemented", tribes[i - 5]), Toast.LENGTH_SHORT).show();
                 break;
 
         }
@@ -154,5 +157,9 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     public boolean onProfileChanged(View view, IProfile iProfile, boolean b) {
         Toast.makeText(this, String.format("Almost logged in as %s", iProfile.getName()), Toast.LENGTH_SHORT).show();
         return false;
+    }
+
+    public static void setTribes(Tribe[] tribes) {
+        MainActivity.tribes = tribes;
     }
 }
