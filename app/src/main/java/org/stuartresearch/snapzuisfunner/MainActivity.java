@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
     static Drawer drawer;
     static Tribe[] tribes;
+    int drawerSelection = 5;
 
 
     @Override
@@ -67,15 +68,16 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 .withActionBarDrawerToggle(true)
                 .withToolbar(toolbar)
                 .withAccountHeader(headerResult)
+                .withSelectedItem(drawerSelection)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName("Profile").withIcon(R.drawable.ic_account_box_black_18dp),
-                        new PrimaryDrawerItem().withName("Messages").withIcon(R.drawable.ic_message_black_18dp),
-                        new PrimaryDrawerItem().withName("Open User").withIcon(R.drawable.ic_group_black_18dp),
-                        new PrimaryDrawerItem().withName("Open Tribe").withIcon(R.drawable.ic_filter_tilt_shift_black_18dp),
+                        new PrimaryDrawerItem().withName("Profile").withIcon(R.drawable.ic_account_box_black_18dp).withCheckable(false),
+                        new PrimaryDrawerItem().withName("Messages").withIcon(R.drawable.ic_message_black_18dp).withCheckable(false),
+                        new PrimaryDrawerItem().withName("Open User").withIcon(R.drawable.ic_group_black_18dp).withCheckable(false),
+                        new PrimaryDrawerItem().withName("Open Tribe").withIcon(R.drawable.ic_filter_tilt_shift_black_18dp).withCheckable(false),
                         new DividerDrawerItem()
                 )
                 .addStickyDrawerItems(
-                        new PrimaryDrawerItem().withName("Settings").withIcon(R.drawable.ic_settings_black_18dp)
+                        new PrimaryDrawerItem().withName("Settings").withIcon(R.drawable.ic_settings_black_18dp).withCheckable(false)
                 ).withOnDrawerItemClickListener(this)
                 .build();
 
@@ -134,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     // DRAWER CLICKED
     @Override
     public boolean onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
+
         switch(i) {
             // Profile
             case 0:
