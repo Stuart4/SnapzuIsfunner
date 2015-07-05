@@ -1,6 +1,7 @@
 package org.stuartresearch.snapzuisfunner;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -31,10 +32,11 @@ import butterknife.OnItemClick;
 
 
 public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerItemClickListener,
-        AccountHeader.OnAccountHeaderListener {
+        AccountHeader.OnAccountHeaderListener, SwipeRefreshLayout.OnRefreshListener {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.grid_view) StaggeredGridView gridView;
+    @Bind(R.id.pull_to_refresh) SwipeRefreshLayout refresh;
 
 
     static Drawer drawer;
@@ -54,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+
+        refresh.setOnRefreshListener(this);
 
         // Build account header
         AccountHeader headerResult = new AccountHeaderBuilder()
@@ -208,10 +212,18 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     }
 
     private void tribeSelected(Tribe tribe) {
+
         MainActivity.tribe = tribe;
         posts = new ArrayList<>(50);
         gridView.setVisibility(View.GONE);
         page = 0;
         downloadPosts();
+    }
+
+    // PULLED TO REFRESH
+    @Override
+    public void onRefresh() {
+        tribeSelected(tribe);
+        refresh.setRefreshing(false);
     }
 }
