@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     static Tribe[] tribes;
     static ArrayList<Post> posts = new ArrayList<>(50);
     static String sorting = "/trending";
-    static Tribe tribe = new Tribe("Frontpage", "/list");
+    static Tribe tribe = new Tribe("Frontpage", "http://snapzu.com/list");
     static int page = 1;
     int drawerSelection = 5;
 
@@ -212,12 +212,17 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     }
 
     private void tribeSelected(Tribe tribe) {
-
         MainActivity.tribe = tribe;
         posts = new ArrayList<>(50);
-        gridView.setVisibility(View.GONE);
-        page = 0;
+        mAdapter = new GridAdapter(this, R.layout.grid_item, posts);
+        resetCardView();
+        page = 1;
         downloadPosts();
+    }
+
+    private void resetCardView() {
+        gridView.setAdapter(mAdapter);
+        gridView.setVisibility(View.GONE);
     }
 
     // PULLED TO REFRESH

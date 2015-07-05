@@ -49,7 +49,7 @@ public class PopulatePosts extends AsyncTask<Void, Void, Post[]> {
             return;
         }
 
-        for (int i = 0; i < posts.length; i++) {
+        for (int i = 0; i < posts.length - 1; i++) {
             MainActivity.getPosts().add(posts[i]);
         }
 
