@@ -10,6 +10,8 @@ import com.etsy.android.grid.util.DynamicHeightImageView;
 
 import org.stuartresearch.SnapzuAPI.Post;
 
+import java.util.ArrayList;
+
 /**
  * Created by jake on 7/4/15.
  */
@@ -17,7 +19,7 @@ public class GridAdapter extends ArrayAdapter<Post> {
     private final LayoutInflater mLayoutInflater;
 
 
-    public GridAdapter(Context context, int resource, Post[] objects) {
+    public GridAdapter(Context context, int resource, ArrayList<Post> objects) {
         super(context, resource, objects);
         mLayoutInflater = LayoutInflater.from(context);
     }

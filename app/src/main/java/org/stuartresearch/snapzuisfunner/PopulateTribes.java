@@ -23,6 +23,11 @@ public class PopulateTribes extends AsyncTask<Void, Void, Tribe[]> {
 
     @Override
     protected void onPostExecute(Tribe[] tribes) {
+        if (tribes == null) {
+            // Network Error
+            System.out.println("NETWORKING ERROR!!!!");
+        }
+
         MainActivity.setTribes(tribes);
         for (int i = 5; i < drawer.getDrawerItems().size(); i++) {
             drawer.removeItem(i);

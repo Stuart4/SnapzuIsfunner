@@ -23,6 +23,8 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import org.stuartresearch.SnapzuAPI.Post;
 import org.stuartresearch.SnapzuAPI.Tribe;
 
+import java.util.ArrayList;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
@@ -36,7 +38,12 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
 
     static Drawer drawer;
+    static GridAdapter mAdapter;
     static Tribe[] tribes;
+    static ArrayList<Post> posts = new ArrayList<>(50);
+    static String sorting = "/trending";
+    static Tribe tribe = new Tribe("Frontpage", "/list");
+    static int page = 1;
     int drawerSelection = 5;
 
 
@@ -85,16 +92,16 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         //Make hamburger appear and function
         drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
 
+        // Fill tribes list
+        downloadTribes();
+
         //Gridview business
-        Post[] posts = new Post[3];
-        posts[0] = new Post();
-        posts[1] = new Post();
-        posts[2] = new Post();
-        GridAdapter mAdapter = new GridAdapter(this, R.layout.grid_item, posts);
+        mAdapter = new GridAdapter(this, R.layout.grid_item, posts);
         gridView.setAdapter(mAdapter);
 
+        // Fill posts
+        downloadPosts();
 
-        new PopulateTribes(drawer).execute();
 
     }
 
@@ -161,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 break;
             // Tribe Selected
             default:
-                Toast.makeText(this, String.format("Tribe Selection (%s) is not implemented", tribes[i - 5]), Toast.LENGTH_SHORT).show();
+                tribeSelected(tribes[i - 5]);
                 break;
 
         }
@@ -179,8 +186,32 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         MainActivity.tribes = tribes;
     }
 
+    public static ArrayList<Post> getPosts() {
+        return posts;
+    }
+
     @OnItemClick(R.id.grid_view)
     public void grid_selected(int position) {
-        Toast.makeText(this, String.format("Post selection (%d) is not implemented", position), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, String.format("Post selection (%s) is not implemented", posts.get(position)), Toast.LENGTH_SHORT).show();
+    }
+
+    private void downloadPosts() {
+        if (tribe.getName().equals("Frontpage")) {
+            new PopulatePosts(mAdapter, gridView, tribe, "", page++).execute();
+        } else {
+            new PopulatePosts(mAdapter, gridView, tribe, sorting, page++).execute();
+        }
+    }
+
+    private void downloadTribes() {
+        new PopulateTribes(drawer).execute();
+    }
+
+    private void tribeSelected(Tribe tribe) {
+        MainActivity.tribe = tribe;
+        posts = new ArrayList<>(50);
+        gridView.setVisibility(View.GONE);
+        page = 0;
+        downloadPosts();
     }
 }
