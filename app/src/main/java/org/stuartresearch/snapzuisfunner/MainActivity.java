@@ -1,7 +1,6 @@
 package org.stuartresearch.snapzuisfunner;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -231,8 +230,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     // POST IS SELECTED
     @OnItemClick(R.id.grid_view)
     public void grid_selected(int position) {
-        Intent i = new Intent(Intent.ACTION_VIEW,
-                Uri.parse(posts.get(position).getLink()));
+        Intent i = new Intent(this, PostActivity.class);
+        i.putExtra("url", posts.get(position).getLink());
         startActivity(i);
     }
 
