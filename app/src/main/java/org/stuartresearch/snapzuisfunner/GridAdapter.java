@@ -41,7 +41,7 @@ public class GridAdapter extends ArrayAdapter<Post> {
         ViewHolder viewHolder;
 
         Post object = objects.get(position);
-        int score = object.getScore();
+        String score = object.getScore();
         String user = object.getUser();
         String title = object.getTitle();
         String paragraph = object.getParagraph();
@@ -75,7 +75,7 @@ public class GridAdapter extends ArrayAdapter<Post> {
             viewHolder.imgView.setVisibility(View.GONE);
         }
 
-        if (score > 0) {
+        if (Float.parseFloat(score) > 0) {
             viewHolder.score.setTextColor(R.color.md_blue_400);
         } else {
             viewHolder.score.setTextColor(R.color.md_red_400);
