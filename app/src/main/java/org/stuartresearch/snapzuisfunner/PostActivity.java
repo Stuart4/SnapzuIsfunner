@@ -9,6 +9,7 @@ import android.view.View;
 import android.webkit.WebView;
 
 import com.r0adkll.slidr.Slidr;
+import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrInterface;
 
 
@@ -23,18 +24,23 @@ public class PostActivity extends Activity implements View.OnTouchListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
+        // slide in
         overridePendingTransition(R.anim.slide_left, 0);
 
-        slidrInterface = Slidr.attach(this);
+        // Sliding mechanism
+        SlidrConfig config = new SlidrConfig.Builder().sensitivity(0.5f).build();
+        slidrInterface = Slidr.attach(this, config);
 
         // Butterknife does not work with webview?
         mWebView = (WebView) findViewById(R.id.post_webview);
 
+        // Configure webview
         mWebView.setOnTouchListener(this);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setBuiltInZoomControls(true);
         mWebView.getSettings().setDisplayZoomControls(false);
 
+        // Load website
         mWebView.loadUrl(getIntent().getStringExtra("url"));
     }
 
