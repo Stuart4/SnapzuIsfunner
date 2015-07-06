@@ -7,8 +7,7 @@
     android:descendantFocusability="blocksDescendants"
     android:orientation="horizontal"
     android:background="@color/md_white_1000"
-    android:elevation="15dp"
-    android:paddingBottom="5dp">
+    android:elevation="15dp">
 
     <com.etsy.android.grid.util.DynamicHeightImageView
         android:id="@+id/grid_image"

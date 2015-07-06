@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         mAdapter = new GridAdapter(this, R.layout.grid_item, posts);
         gridView.setAdapter(mAdapter);
 
+
         // Should work, but bug 77712
         refresh.setRefreshing(true);
 
@@ -319,4 +320,5 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         getSupportActionBar().setTitle(tribe.getName().toUpperCase());
         getSupportActionBar().setSubtitle(this.sorting.substring(1));
     }
+
 }
