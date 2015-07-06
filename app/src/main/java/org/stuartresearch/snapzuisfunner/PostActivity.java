@@ -4,25 +4,30 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.webkit.WebView;
 
 import com.r0adkll.slidr.Slidr;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import com.r0adkll.slidr.model.SlidrInterface;
 
 
-public class PostActivity extends Activity {
+public class PostActivity extends Activity implements View.OnTouchListener {
 
-    @Bind(R.id.post_webview) WebView mWebView;
+    WebView mWebView;
+
+    SlidrInterface slidrInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
-        Slidr.attach(this);
-        ButterKnife.bind(this);
+        slidrInterface = Slidr.attach(this);
 
+        // Butterknife does not work with webview?
+        mWebView = (WebView) findViewById(R.id.post_webview);
+
+        mWebView.setOnTouchListener(this);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setBuiltInZoomControls(true);
         mWebView.getSettings().setDisplayZoomControls(false);
@@ -50,5 +55,13 @@ public class PostActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    // WEBVIEW TOUCHED
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        // Do not steal scrolling of mWebView
+        v.getParent().requestDisallowInterceptTouchEvent(true);
+        return false;
     }
 }
