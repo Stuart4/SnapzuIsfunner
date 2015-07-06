@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,12 +63,17 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e("SIF", "CREATED");
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
 
         refresh.setOnRefreshListener(this);
+
+        // Set titles
+        getSupportActionBar().setTitle("ALL");
+        getSupportActionBar().setSubtitle("Trending");
 
         // Build account header
         AccountHeader headerResult = new AccountHeaderBuilder()
@@ -105,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
         //Make hamburger appear and function
         drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+
 
         // Receive updates from other components
         bus.register(this);
@@ -149,6 +156,12 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -232,11 +245,14 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     private void tribeSelected(Tribe tribe) {
         refresh.setRefreshing(true);
         this.tribe = tribe;
+        this.sorting = "/trending";
         posts.clear();
         mAdapter.notifyDataSetInvalidated();
         page = 1;
         gridView.setVisibility(View.GONE);
         downloadPosts();
+
+        updateTitle();
     }
 
 
@@ -288,5 +304,10 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     @Subscribe
     public void onTribesError(PopulateTribes.TribesError tribesError) {
         Toast.makeText(this, "Network errors not implemented", Toast.LENGTH_SHORT).show();
+    }
+
+    public void updateTitle() {
+        getSupportActionBar().setTitle(tribe.getName().toUpperCase());
+        getSupportActionBar().setSubtitle(this.sorting.substring(1));
     }
 }
