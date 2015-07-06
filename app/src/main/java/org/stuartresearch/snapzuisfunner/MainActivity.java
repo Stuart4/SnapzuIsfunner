@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +35,8 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
+import icepick.Icepick;
+import icepick.Icicle;
 
 
 public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerItemClickListener,
@@ -57,13 +58,13 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     String sorting = "/trending";
     Tribe tribe = new Tribe("Frontpage", "http://snapzu.com/list");
     int page = 1;
-    int drawerSelection = 5;
+    @Icicle int drawerSelection = 5;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("SIF", "CREATED");
+        Icepick.restoreInstanceState(this, savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -162,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this, outState);
     }
 
     @Override
@@ -207,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 break;
             // Tribe Selected
             default:
+                drawerSelection = i;
                 tribeSelected(tribes[i - 5]);
                 break;
 
