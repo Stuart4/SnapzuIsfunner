@@ -7,15 +7,18 @@
     android:descendantFocusability="blocksDescendants"
     android:orientation="horizontal"
     android:background="@color/md_white_1000"
-    android:elevation="15dp"
-    android:padding="20dp">
+    android:elevation="15dp">
 
     <com.etsy.android.grid.util.DynamicHeightImageView
         android:id="@+id/grid_image"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/header" />
+        android:src="@android:color/white"
+        android:visibility="gone"
+
+
+        />
 
     <TextView
         android:layout_width="match_parent"
@@ -33,22 +36,26 @@
         android:typeface="normal"
         android:textColor="@color/icons"
         android:enabled="false"
+        android:maxHeight="200dp"
         android:elevation="0dp"
         android:elegantTextHeight="false"
         android:autoText="false"
-        android:padding="0dp" />
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Paragraph"
         android:id="@+id/grid_paragraph"
-        android:layout_below="@+id/grid_image"
+        android:layout_below="@+id/grid_title"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:textColor="@color/primary_text"
         android:paddingTop="3dp"
-        android:paddingBottom="3dp" />
+        android:paddingBottom="3dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -59,7 +66,8 @@
         android:layout_below="@+id/grid_paragraph"
         android:textColor="@color/primary_text"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:paddingRight="20dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -70,6 +78,7 @@
         android:layout_below="@+id/grid_paragraph"
         android:textColor="@color/primary_text"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:paddingLeft="20dp" />
 
 </RelativeLayout>

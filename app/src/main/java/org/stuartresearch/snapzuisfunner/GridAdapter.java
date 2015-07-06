@@ -68,8 +68,12 @@ public class GridAdapter extends ArrayAdapter<Post> {
         viewHolder.title.setText(title);
         viewHolder.paragraph.setText(paragraph);
 
-        if (!imageUrl.isEmpty())
+        if (!imageUrl.isEmpty()) {
             Picasso.with(convertView.getContext()).load(object.getItemImage()).into(viewHolder.imgView);
+            viewHolder.imgView.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.imgView.setVisibility(View.GONE);
+        }
 
         if (score > 0) {
             viewHolder.score.setTextColor(R.color.md_blue_400);
