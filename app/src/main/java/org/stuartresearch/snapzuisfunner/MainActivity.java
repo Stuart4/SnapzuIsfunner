@@ -50,14 +50,14 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
     Drawer drawer;
     GridAdapter mAdapter;
-    Tribe[] tribes;
+    @Icicle Tribe[] tribes;
 
     //ATTN: HAS TO BE STATIC - Don't ask me why.
     static ArrayList<Post> posts = new ArrayList<>(50);
 
-    String sorting = "/trending";
-    Tribe tribe = new Tribe("Frontpage", "http://snapzu.com/list");
-    int page = 1;
+    @Icicle String sorting = "/trending";
+    @Icicle Tribe tribe = new Tribe("Frontpage", "http://snapzu.com/list");
+    @Icicle int page = 1;
     @Icicle int drawerSelection = 5;
 
 
@@ -73,8 +73,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         refresh.setOnRefreshListener(this);
 
         // Set titles
-        getSupportActionBar().setTitle("ALL");
-        getSupportActionBar().setSubtitle("Trending");
+        updateTitle();
 
         // Build account header
         AccountHeader headerResult = new AccountHeaderBuilder()
@@ -118,7 +117,10 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         bus.register(this);
 
         // Fill tribes list
-        downloadTribes();
+        if (tribes == null)
+            downloadTribes();
+        else
+            showTribes(tribes);
 
         //Gridview business
         mAdapter = new GridAdapter(this, R.layout.grid_item, posts);
@@ -268,10 +270,12 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     // SENT FROM PopulatePosts
     @Subscribe
     public void onPostsReady(PopulatePosts.PostsPackage postsPackage) {
-        Post[] newPosts = postsPackage.posts;
+        showPosts(postsPackage.posts);
+    }
 
-        for (int i = 0; i < newPosts.length; i++) {
-            posts.add(newPosts[i]);
+    public void showPosts (Post[] posts) {
+        for (int i = 0; i < posts.length; i++) {
+            this.posts.add(posts[i]);
         }
 
         mAdapter.notifyDataSetChanged();
@@ -290,9 +294,11 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     // SENT FROM PopulateTribes
     @Subscribe
     public void onTribesReady(PopulateTribes.TribesPackage tribesPackage) {
-        Tribe[] newTribes = tribesPackage.tribes;
+        showTribes(tribesPackage.tribes);
+    }
 
-        this.tribes = newTribes;
+    public void showTribes(Tribe[] tribes) {
+        this.tribes = tribes;
 
         for (int i = 5; i < drawer.getDrawerItems().size(); i++) {
             drawer.removeItem(i);
