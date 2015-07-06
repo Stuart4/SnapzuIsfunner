@@ -41,50 +41,40 @@ public class GridAdapter extends ArrayAdapter<Post> {
         ViewHolder viewHolder;
 
         Post object = objects.get(position);
+        int score = object.getScore();
+        String user = object.getUser();
+        String title = object.getTitle();
+        String paragraph = object.getParagraph();
+        String imageUrl = object.getItemImage();
+
 
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.grid_item, parent, false);
             viewHolder = new ViewHolder();
-
-            viewHolder.imgView = (DynamicHeightImageView) convertView.findViewById(R.id.grid_image);
-            viewHolder.user = (TextView) convertView.findViewById(R.id.grid_user);
-            viewHolder.score = (TextView) convertView.findViewById(R.id.grid_score);
-            viewHolder.title = (TextView) convertView.findViewById(R.id.grid_title);
-            viewHolder.paragraph = (TextView) convertView.findViewById(R.id.grid_paragraph);
-
-            int score = object.getScore();
-
-            viewHolder.user.setText(object.getUser());
-            viewHolder.score.setText(Integer.toString(score));
-            viewHolder.title.setText(object.getTitle());
-            viewHolder.paragraph.setText(object.getParagraph());
-
-            Picasso.with(convertView.getContext()).load(object.getItemImage()).into(viewHolder.imgView);
-
-            if (score > 0) {
-                viewHolder.score.setTextColor(R.color.md_blue_400);
-            } else {
-                viewHolder.score.setTextColor(R.color.md_red_400);
-            }
-
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
+        }
 
-            int score = object.getScore();
+        viewHolder.imgView = (DynamicHeightImageView) convertView.findViewById(R.id.grid_image);
+        viewHolder.user = (TextView) convertView.findViewById(R.id.grid_user);
+        viewHolder.score = (TextView) convertView.findViewById(R.id.grid_score);
+        viewHolder.title = (TextView) convertView.findViewById(R.id.grid_title);
+        viewHolder.paragraph = (TextView) convertView.findViewById(R.id.grid_paragraph);
 
-            viewHolder.user.setText(object.getUser());
-            viewHolder.score.setText(Integer.toString(score));
-            viewHolder.title.setText(object.getTitle());
-            viewHolder.paragraph.setText(object.getParagraph());
 
+        viewHolder.user.setText(user);
+        viewHolder.score.setText(Integer.toString(score));
+        viewHolder.title.setText(title);
+        viewHolder.paragraph.setText(paragraph);
+
+        if (!imageUrl.isEmpty())
             Picasso.with(convertView.getContext()).load(object.getItemImage()).into(viewHolder.imgView);
 
-            if (score > 0) {
-                viewHolder.score.setTextColor(R.color.md_blue_400);
-            } else {
-                viewHolder.score.setTextColor(R.color.md_red_400);
-            }
+        if (score > 0) {
+            viewHolder.score.setTextColor(R.color.md_blue_400);
+        } else {
+            viewHolder.score.setTextColor(R.color.md_red_400);
         }
 
         viewHolder.imgView.setHeightRatio(0.7);
