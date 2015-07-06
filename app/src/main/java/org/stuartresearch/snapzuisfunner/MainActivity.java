@@ -47,7 +47,10 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     Drawer drawer;
     GridAdapter mAdapter;
     Tribe[] tribes;
-    ArrayList<Post> posts = new ArrayList<>(50);
+
+    //ATTN: HAS TO BE STATIC - Don't ask me why.
+    static ArrayList<Post> posts = new ArrayList<>(50);
+
     String sorting = "/trending";
     Tribe tribe = new Tribe("Frontpage", "http://snapzu.com/list");
     int page = 1;
