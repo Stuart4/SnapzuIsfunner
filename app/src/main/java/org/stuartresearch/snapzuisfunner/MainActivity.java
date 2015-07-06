@@ -1,5 +1,7 @@
 package org.stuartresearch.snapzuisfunner;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -210,7 +212,9 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     // POST IS SELECTED
     @OnItemClick(R.id.grid_view)
     public void grid_selected(int position) {
-        Toast.makeText(this, String.format("Post selection (%s) is not implemented", posts.get(position)), Toast.LENGTH_SHORT).show();
+        Intent i = new Intent(Intent.ACTION_VIEW,
+                Uri.parse(posts.get(position).getLink()));
+        startActivity(i);
     }
 
     private void downloadPosts() {
