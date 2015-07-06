@@ -22,6 +22,9 @@ public class PostActivity extends Activity implements View.OnTouchListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
+
+        overridePendingTransition(R.anim.slide_left, 0);
+
         slidrInterface = Slidr.attach(this);
 
         // Butterknife does not work with webview?
@@ -55,6 +58,12 @@ public class PostActivity extends Activity implements View.OnTouchListener {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(0, R.anim.slide_right);
     }
 
     // WEBVIEW TOUCHED
