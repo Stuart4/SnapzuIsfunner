@@ -3,7 +3,6 @@ package org.stuartresearch.snapzuisfunner;
 import android.os.AsyncTask;
 
 import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 
 import org.stuartresearch.SnapzuAPI.Soup;
 import org.stuartresearch.SnapzuAPI.Tribe;
@@ -21,21 +20,6 @@ public class PopulateTribes extends AsyncTask<Void, Void, Tribe[]> {
         this.drawer = drawer;
     }
 
-    @Override
-    protected void onPostExecute(Tribe[] tribes) {
-        if (tribes == null) {
-            // Network Error
-            System.out.println("NETWORKING ERROR!!!!");
-        }
-
-        MainActivity.setTribes(tribes);
-        for (int i = 5; i < drawer.getDrawerItems().size(); i++) {
-            drawer.removeItem(i);
-        }
-        for (int i = 0; i < tribes.length; i++) {
-            drawer.addItem(new SecondaryDrawerItem().withName(tribes[i].getName()));
-        }
-    }
 
     @Override
     protected Tribe[] doInBackground(Void... params) {
@@ -46,5 +30,32 @@ public class PopulateTribes extends AsyncTask<Void, Void, Tribe[]> {
         } catch (IOException dropIt) {}
 
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(Tribe[] tribes) {
+        if (tribes == null) {
+            // Network Error
+            MainActivity.bus.post(new TribesError(TribesError.NETWORK_ERROR));
+        } else {
+            MainActivity.bus.post(new TribesPackage(tribes));
+        }
+    }
+
+    public static class TribesPackage {
+        public final Tribe[] tribes;
+
+        public TribesPackage(Tribe[] tribes) {
+            this.tribes = tribes;
+        }
+    }
+
+    public static class TribesError {
+        public static final int NETWORK_ERROR = 0;
+        public final int error;
+
+        public TribesError(int error) {
+            this.error = error;
+        }
     }
 }

@@ -18,8 +18,12 @@ import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
+import com.squareup.otto.ThreadEnforcer;
 
 import org.stuartresearch.SnapzuAPI.Post;
 import org.stuartresearch.SnapzuAPI.Tribe;
@@ -38,14 +42,15 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     @Bind(R.id.grid_view) StaggeredGridView gridView;
     @Bind(R.id.pull_to_refresh) SwipeRefreshLayout refresh;
 
+    public static Bus bus = new Bus(ThreadEnforcer.MAIN);
 
-    static Drawer drawer;
-    static GridAdapter mAdapter;
-    static Tribe[] tribes;
-    static ArrayList<Post> posts = new ArrayList<>(50);
-    static String sorting = "/trending";
-    static Tribe tribe = new Tribe("Frontpage", "http://snapzu.com/list");
-    static int page = 1;
+    Drawer drawer;
+    GridAdapter mAdapter;
+    Tribe[] tribes;
+    ArrayList<Post> posts = new ArrayList<>(50);
+    String sorting = "/trending";
+    Tribe tribe = new Tribe("Frontpage", "http://snapzu.com/list");
+    int page = 1;
     int drawerSelection = 5;
 
 
@@ -96,12 +101,18 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         //Make hamburger appear and function
         drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
 
+        // Receive updates from other components
+        bus.register(this);
+
         // Fill tribes list
         downloadTribes();
 
         //Gridview business
         mAdapter = new GridAdapter(this, R.layout.grid_item, posts);
         gridView.setAdapter(mAdapter);
+
+        // Should work, but bug 77712
+        refresh.setRefreshing(true);
 
         // Fill posts
         downloadPosts();
@@ -133,6 +144,12 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        bus.unregister(this);
     }
 
     // CLOSE DRAWER ON BACK
@@ -186,14 +203,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         return false;
     }
 
-    public static void setTribes(Tribe[] tribes) {
-        MainActivity.tribes = tribes;
-    }
 
-    public static ArrayList<Post> getPosts() {
-        return posts;
-    }
-
+    // POST IS SELECTED
     @OnItemClick(R.id.grid_view)
     public void grid_selected(int position) {
         Toast.makeText(this, String.format("Post selection (%s) is not implemented", posts.get(position)), Toast.LENGTH_SHORT).show();
@@ -201,9 +212,9 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
     private void downloadPosts() {
         if (tribe.getName().equals("Frontpage")) {
-            new PopulatePosts(mAdapter, gridView, tribe, "", page++).execute();
+            new PopulatePosts(tribe, "", page++).execute();
         } else {
-            new PopulatePosts(mAdapter, gridView, tribe, sorting, page++).execute();
+            new PopulatePosts(tribe, sorting, page++).execute();
         }
     }
 
@@ -212,23 +223,63 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     }
 
     private void tribeSelected(Tribe tribe) {
-        MainActivity.tribe = tribe;
-        posts = new ArrayList<>(50);
-        mAdapter = new GridAdapter(this, R.layout.grid_item, posts);
-        resetCardView();
+        refresh.setRefreshing(true);
+        this.tribe = tribe;
+        posts.clear();
+        mAdapter.notifyDataSetInvalidated();
         page = 1;
+        gridView.setVisibility(View.GONE);
         downloadPosts();
     }
 
-    private void resetCardView() {
-        gridView.setAdapter(mAdapter);
-        gridView.setVisibility(View.GONE);
-    }
 
     // PULLED TO REFRESH
     @Override
     public void onRefresh() {
         tribeSelected(tribe);
+    }
+
+    // SENT FROM PopulatePosts
+    @Subscribe
+    public void onPostsReady(PopulatePosts.PostsPackage postsPackage) {
+        Post[] newPosts = postsPackage.posts;
+
+        for (int i = 0; i < newPosts.length; i++) {
+            posts.add(newPosts[i]);
+        }
+
+        mAdapter.notifyDataSetChanged();
+        gridView.setVisibility(View.VISIBLE);
+
         refresh.setRefreshing(false);
+    }
+
+    // SENT FROM PopulatePosts
+    @Subscribe
+    public void onPostsError(PopulatePosts.PostsError postsError) {
+        Toast.makeText(this, "Network errors not implemented", Toast.LENGTH_SHORT).show();
+        refresh.setRefreshing(false);
+    }
+
+    // SENT FROM PopulateTribes
+    @Subscribe
+    public void onTribesReady(PopulateTribes.TribesPackage tribesPackage) {
+        Tribe[] newTribes = tribesPackage.tribes;
+
+        this.tribes = newTribes;
+
+        for (int i = 5; i < drawer.getDrawerItems().size(); i++) {
+            drawer.removeItem(i);
+        }
+
+        for (int i = 0; i < tribes.length; i++) {
+            drawer.addItem(new SecondaryDrawerItem().withName(this.tribes[i].getName()));
+        }
+    }
+
+    // SENT FROM PopulateTribes
+    @Subscribe
+    public void onTribesError(PopulateTribes.TribesError tribesError) {
+        Toast.makeText(this, "Network errors not implemented", Toast.LENGTH_SHORT).show();
     }
 }

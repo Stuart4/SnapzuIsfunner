@@ -1,9 +1,6 @@
 package org.stuartresearch.snapzuisfunner;
 
 import android.os.AsyncTask;
-import android.view.View;
-
-import com.etsy.android.grid.StaggeredGridView;
 
 import org.stuartresearch.SnapzuAPI.Post;
 import org.stuartresearch.SnapzuAPI.Soup;
@@ -16,15 +13,12 @@ import java.io.IOException;
  */
 public class PopulatePosts extends AsyncTask<Void, Void, Post[]> {
 
-    GridAdapter mAdapter;
-    StaggeredGridView gridView;
     String tribe;
     String sorting;
     int page;
 
-    public PopulatePosts(GridAdapter mAdapter, StaggeredGridView gridView, Tribe tribe, String sorting, int page) {
-        this.mAdapter = mAdapter;
-        this.gridView = gridView;
+    public PopulatePosts(Tribe tribe, String sorting, int page) {
+
         this.tribe = tribe.getLink();
         this.sorting = sorting;
         this.page = page;
@@ -45,16 +39,27 @@ public class PopulatePosts extends AsyncTask<Void, Void, Post[]> {
     protected void onPostExecute(Post[] posts) {
         if (posts == null) {
             // Network Error
-            System.out.println("NETWORKING ERROR!!!!");
-            return;
+            MainActivity.bus.post(new PostsError(PostsError.NETWORK_ERROR));
+        } else {
+            // Send to main activity
+            MainActivity.bus.post(new PostsPackage(posts));
         }
+    }
 
-        for (int i = 0; i < posts.length - 1; i++) {
-            MainActivity.getPosts().add(posts[i]);
+    public static class PostsPackage {
+        public final Post[] posts;
+
+        public PostsPackage(Post[] posts) {
+            this.posts = posts;
         }
+    }
 
-        mAdapter.notifyDataSetChanged();
-        gridView.setVisibility(View.VISIBLE);
+    public static class PostsError {
+        public static final int NETWORK_ERROR = 0;
+        public final int error;
 
+        public PostsError(int error) {
+            this.error = error;
+        }
     }
 }
