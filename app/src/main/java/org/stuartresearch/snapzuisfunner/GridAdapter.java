@@ -64,7 +64,7 @@ public class GridAdapter extends ArrayAdapter<Post> {
 
 
         viewHolder.user.setText(user);
-        viewHolder.score.setText(Integer.toString(score));
+        viewHolder.score.setText(score);
         viewHolder.title.setText(title);
         viewHolder.paragraph.setText(paragraph);
 
