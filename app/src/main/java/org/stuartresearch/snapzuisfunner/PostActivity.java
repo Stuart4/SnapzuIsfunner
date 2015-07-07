@@ -142,6 +142,17 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     @Subscribe
     public void onPostReceive(MainActivity.SinglePostPackage singlePostPackage) {
         this.post = singlePostPackage.post;
+        new PopulateComments(post.getLink()).execute();
+    }
+
+    @Subscribe
+    public void onCommentsReceive(PopulateComments.CommentsPackage commentsPackage) {
+        Toast.makeText(this, commentsPackage.comments[0].toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Subscribe
+    public void onCommentsError(PopulateComments.CommentsError commentsError) {
+        Toast.makeText(this, "Network errors are not implemented", Toast.LENGTH_SHORT).show();
     }
 
     private static class CustomWebViewClient extends WebViewClient {
