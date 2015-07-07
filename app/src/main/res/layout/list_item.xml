@@ -1,21 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="3dp">
+    android:orientation="horizontal">
 
-    <TextView
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:id="@+id/comment_indent"
+        android:src="@color/primary_light"/>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/comment_title"
-        android:textColor="@color/primary_text"
-        android:text="Hi there" />
+        android:orientation="vertical"
+        android:background="@color/md_white_1000"
+        android:padding="5dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/comment_paragraph"
-        android:textColor="@color/primary_text"
-        android:text="I am a comment." />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/comment_title"
+            android:textColor="@color/primary_text"
+            android:text="Hi there" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/comment_paragraph"
+            android:textColor="@color/primary_text"
+            android:text="I am a comment." />
+
+    </LinearLayout>
 
 </LinearLayout>

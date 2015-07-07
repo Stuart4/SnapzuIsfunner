@@ -1,10 +1,12 @@
 package org.stuartresearch.snapzuisfunner;
 
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.stuartresearch.SnapzuAPI.Comment;
@@ -25,6 +27,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
     }
 
     static class ViewHolder {
+        ImageView intent;
         TextView title;
         TextView paragraph;
     }
@@ -36,6 +39,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         Comment object = objects[position];
         String title = object.getUser();
         String paragraph = object.getParagraph();
+        int indent = object.getIndent() * 4;
 
 
         if (convertView == null) {
@@ -49,12 +53,13 @@ public class ListAdapter extends ArrayAdapter<Comment> {
 
         viewHolder.title = (TextView) convertView.findViewById(R.id.comment_title);
         viewHolder.paragraph = (TextView) convertView.findViewById(R.id.comment_paragraph);
-
+        viewHolder.intent = (ImageView) convertView.findViewById(R.id.comment_indent);
 
 
         viewHolder.title.setText(title);
         viewHolder.paragraph.setText(paragraph);
-
+        viewHolder.intent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) indent, convertView.getResources().getDisplayMetrics()) + 0.5f);
+        viewHolder.intent.requestLayout();
 
         return convertView;
     }
