@@ -16,6 +16,9 @@ import android.widget.Toast;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrInterface;
+import com.squareup.otto.Subscribe;
+
+import org.stuartresearch.SnapzuAPI.Post;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -26,6 +29,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     @Bind(R.id.post_webview) WebView mWebView;
     @Bind(R.id.post_toolbar) Toolbar toolbar;
 
+    Post post;
 
     SlidrInterface slidrInterface;
 
@@ -34,6 +38,8 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
         ButterKnife.bind(this);
+
+        MainActivity.bus.register(this);
 
         Intent received = getIntent();
 
@@ -94,7 +100,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
             case R.id.webview_share:
                 Intent share = new Intent(Intent.ACTION_SEND);
                 share.setType("text/plain");
-                share.putExtra(Intent.EXTRA_SUBJECT, "Snapzu");
+                share.putExtra(Intent.EXTRA_SUBJECT, post.getTitle());
                 share.putExtra(Intent.EXTRA_TEXT, mWebView.getUrl());
                 startActivity(Intent.createChooser(share, "Share Current Page"));
                 break;
@@ -112,6 +118,12 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MainActivity.bus.unregister(this);
+    }
+
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(0, R.anim.slide_right);
@@ -123,6 +135,12 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         // Do not steal scrolling of mWebView
         v.getParent().requestDisallowInterceptTouchEvent(true);
         return false;
+    }
+
+    // Sent from MainActivity
+    @Subscribe
+    public void onPostReceive(MainActivity.SinglePostPackage singlePostPackage) {
+        this.post = singlePostPackage.post;
     }
 
     private static class CustomWebViewClient extends WebViewClient {

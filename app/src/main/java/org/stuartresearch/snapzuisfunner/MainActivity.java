@@ -23,6 +23,7 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 import com.squareup.otto.ThreadEnforcer;
 
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
     @Icicle String sorting = "/trending";
     @Icicle Tribe tribe = new Tribe("Frontpage", "http://snapzu.com/list");
+    Post post;
     @Icicle int page = 1;
     @Icicle int drawerSelection = 5;
 
@@ -230,8 +232,9 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     // POST IS SELECTED
     @OnItemClick(R.id.grid_view)
     public void grid_selected(int position) {
+        this.post = posts.get(position);
         Intent i = new Intent(this, PostActivity.class);
-        i.putExtra("url", posts.get(position).getLink());
+        i.putExtra("url", this.post.getLink());
         startActivity(i);
     }
 
@@ -318,6 +321,19 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     public void updateTitle() {
         getSupportActionBar().setTitle(tribe.getName().toUpperCase());
         getSupportActionBar().setSubtitle(this.sorting.substring(1));
+    }
+
+    public static class SinglePostPackage {
+        public final Post post;
+
+        public SinglePostPackage(Post post) {
+            this.post = post;
+        }
+    }
+
+    @Produce
+    public SinglePostPackage produceSinglePostPackage() {
+        return new SinglePostPackage(this.post);
     }
 
 }
