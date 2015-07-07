@@ -151,7 +151,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     @Subscribe
     public void onPostReceive(MainActivity.SinglePostPackage singlePostPackage) {
         this.post = singlePostPackage.post;
-        new PopulateComments(post.getLink()).execute();
+        new PopulateComments(post.getCommentsLink()).execute();
     }
 
     @Subscribe
