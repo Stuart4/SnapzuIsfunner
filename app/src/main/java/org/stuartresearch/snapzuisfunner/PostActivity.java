@@ -100,7 +100,8 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
             case R.id.webview_share:
                 Intent share = new Intent(Intent.ACTION_SEND);
                 share.setType("text/plain");
-                share.putExtra(Intent.EXTRA_SUBJECT, post.getTitle());
+                share.putExtra(Intent.EXTRA_SUBJECT, post.getTitle()
+                );
                 share.putExtra(Intent.EXTRA_TEXT, mWebView.getUrl());
                 startActivity(Intent.createChooser(share, "Share Current Page"));
                 break;

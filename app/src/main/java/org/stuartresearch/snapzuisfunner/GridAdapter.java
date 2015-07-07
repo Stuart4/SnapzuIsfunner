@@ -68,7 +68,7 @@ public class GridAdapter extends ArrayAdapter<Post> {
         viewHolder.title.setText(title);
         viewHolder.paragraph.setText(paragraph);
 
-        if (!imageUrl.isEmpty()) {
+        if (imageUrl != null && !imageUrl.isEmpty()) {
             Picasso.with(convertView.getContext()).load(object.getItemImage()).into(viewHolder.imgView);
             viewHolder.imgView.setVisibility(View.VISIBLE);
         } else {
