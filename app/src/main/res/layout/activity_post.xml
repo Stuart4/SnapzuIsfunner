@@ -53,12 +53,15 @@
 
             </android.support.v7.widget.Toolbar>
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="fitStart"
-                android:src="@drawable/ic_create_black_24dp" >
-            </ImageView>
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/comment_listview"
+                android:divider="@color/primary"
+                android:dividerHeight="1dp">
+            </ListView>
+
         </LinearLayout>
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 

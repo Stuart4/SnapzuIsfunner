@@ -19,12 +19,14 @@ import java.util.ArrayList;
  */
 public class GridAdapter extends ArrayAdapter<Post> {
     private final LayoutInflater mLayoutInflater;
-    ArrayList<Post> objects;
+    private ArrayList<Post> objects;
+    private int layoutResource;
 
 
     public GridAdapter(Context context, int resource, ArrayList<Post> objects) {
         super(context, resource, objects);
         mLayoutInflater = LayoutInflater.from(context);
+        layoutResource = resource;
         this.objects = objects;
     }
 
@@ -49,7 +51,7 @@ public class GridAdapter extends ArrayAdapter<Post> {
 
 
         if (convertView == null) {
-            convertView = mLayoutInflater.inflate(R.layout.grid_item, parent, false);
+            convertView = mLayoutInflater.inflate(layoutResource, parent, false);
             viewHolder = new ViewHolder();
             convertView.setTag(viewHolder);
         } else {

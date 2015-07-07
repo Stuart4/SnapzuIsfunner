@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.r0adkll.slidr.Slidr;
@@ -18,6 +19,7 @@ import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrInterface;
 import com.squareup.otto.Subscribe;
 
+import org.stuartresearch.SnapzuAPI.Comment;
 import org.stuartresearch.SnapzuAPI.Post;
 
 import butterknife.Bind;
@@ -28,8 +30,12 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Bind(R.id.post_webview) WebView mWebView;
     @Bind(R.id.post_toolbar) Toolbar toolbar;
+    @Bind(R.id.comment_listview) ListView listView;
 
     Post post;
+    Comment[] comments;
+
+    ListAdapter mListAdapter;
 
     SlidrInterface slidrInterface;
 
@@ -67,6 +73,9 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
         // Load website
         mWebView.loadUrl(getIntent().getStringExtra("url"));
+
+        //Listview
+
     }
 
     @Override
@@ -147,12 +156,15 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Subscribe
     public void onCommentsReceive(PopulateComments.CommentsPackage commentsPackage) {
-        Toast.makeText(this, commentsPackage.comments[0].toString(), Toast.LENGTH_SHORT).show();
+        this.comments = commentsPackage.comments;
+        mListAdapter = new ListAdapter(this, R.layout.list_item, comments);
+        listView.setAdapter(mListAdapter);
+        mListAdapter.notifyDataSetChanged();
     }
 
     @Subscribe
     public void onCommentsError(PopulateComments.CommentsError commentsError) {
-        Toast.makeText(this, "Network errors are not implemented", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Network error is not implemented", Toast.LENGTH_SHORT).show();
     }
 
     private static class CustomWebViewClient extends WebViewClient {
