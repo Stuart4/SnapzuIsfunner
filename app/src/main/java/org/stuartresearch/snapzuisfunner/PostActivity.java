@@ -24,6 +24,7 @@ import org.stuartresearch.SnapzuAPI.Post;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnItemClick;
 
 
 public class PostActivity extends AppCompatActivity implements View.OnTouchListener {
@@ -64,8 +65,11 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         // Butterknife does not work with webview?
         mWebView = (WebView) findViewById(R.id.post_webview);
 
-        // Configure webview
+        // Prevent sliding
         mWebView.setOnTouchListener(this);
+        listView.setOnTouchListener(this);
+
+        // Configure webview
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setBuiltInZoomControls(true);
         mWebView.getSettings().setDisplayZoomControls(false);
@@ -139,7 +143,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         overridePendingTransition(0, R.anim.slide_right);
     }
 
-    // WEBVIEW TOUCHED
+    // WEBVIEW or LISTVIEW TOUCHED
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         // Do not steal scrolling of mWebView
@@ -178,6 +182,12 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
             //or false otherwise
             return true;
         }
+    }
+
+    // ON COMMENT SELECTED
+    @OnItemClick(R.id.comment_listview)
+    public void commentSelected(int position) {
+        Toast.makeText(this, "Comment selection is not implemented", Toast.LENGTH_SHORT).show();
     }
 
 }
