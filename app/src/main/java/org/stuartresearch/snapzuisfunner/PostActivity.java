@@ -91,6 +91,13 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
                 Intent openInBrowser = new Intent(Intent.ACTION_VIEW, Uri.parse(mWebView.getUrl()));
                 startActivity(openInBrowser);
                 break;
+            case R.id.webview_share:
+                Intent share = new Intent(Intent.ACTION_SEND);
+                share.setType("text/plain");
+                share.putExtra(Intent.EXTRA_SUBJECT, "Snapzu");
+                share.putExtra(Intent.EXTRA_TEXT, mWebView.getUrl());
+                startActivity(Intent.createChooser(share, "Share Current Page"));
+                break;
             case R.id.webview_fullscreen:
                 Toast.makeText(this, "Fullscreen is not implemented.", Toast.LENGTH_SHORT).show();
                 break;
