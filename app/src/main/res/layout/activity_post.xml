@@ -36,7 +36,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#ffffff"
+            android:background="@color/primary_light"
             android:orientation="vertical"
             android:clickable="true"
             android:focusable="false"
@@ -58,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/comment_listview"
-                android:divider="@color/primary"
+                android:divider="@color/primary_light"
                 android:dividerHeight="1dp">
             </ListView>
 
