@@ -1,21 +1,31 @@
 package org.stuartresearch.snapzuisfunner;
 
-import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrInterface;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
-public class PostActivity extends Activity implements View.OnTouchListener {
 
-    WebView mWebView;
+public class PostActivity extends AppCompatActivity implements View.OnTouchListener {
+
+    @Bind(R.id.post_webview) WebView mWebView;
+    @Bind(R.id.post_toolbar) Toolbar toolbar;
+
 
     SlidrInterface slidrInterface;
 
@@ -23,6 +33,14 @@ public class PostActivity extends Activity implements View.OnTouchListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
+        ButterKnife.bind(this);
+
+        Intent received = getIntent();
+
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
 
         // slide in
         overridePendingTransition(R.anim.slide_left, 0);
@@ -39,6 +57,7 @@ public class PostActivity extends Activity implements View.OnTouchListener {
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setBuiltInZoomControls(true);
         mWebView.getSettings().setDisplayZoomControls(false);
+        mWebView.setWebViewClient(new CustomWebViewClient());
 
         // Load website
         mWebView.loadUrl(getIntent().getStringExtra("url"));
@@ -58,9 +77,28 @@ public class PostActivity extends Activity implements View.OnTouchListener {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.webview_back:
+                mWebView.goBack();
+                break;
+            case R.id.webview_refresh:
+                mWebView.reload();
+                break;
+            case R.id.webview_forward:
+                mWebView.goForward();
+                break;
+            case R.id.webview_open_in_browser:
+                Intent openInBrowser = new Intent(Intent.ACTION_VIEW, Uri.parse(mWebView.getUrl()));
+                startActivity(openInBrowser);
+                break;
+            case R.id.webview_fullscreen:
+                Toast.makeText(this, "Fullscreen is not implemented.", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.webview_more:
+                Toast.makeText(this, "More is not implemented.", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -79,4 +117,18 @@ public class PostActivity extends Activity implements View.OnTouchListener {
         v.getParent().requestDisallowInterceptTouchEvent(true);
         return false;
     }
+
+    private static class CustomWebViewClient extends WebViewClient {
+
+        public boolean shouldOverrideUrlLoading(WebView view, String url)
+        {
+            //do whatever you want with the url that is clicked inside the webview.
+            //for example tell the webview to load that url.
+            view.loadUrl(url);
+            //return true if this method handled the link event
+            //or false otherwise
+            return true;
+        }
+    }
+
 }

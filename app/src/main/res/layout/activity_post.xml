@@ -49,8 +49,9 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/accent"
                 android:gravity="center|top"
-                android:title="Birthday"
-                android:layout_width="match_parent"/>
+                android:layout_width="match_parent">
+
+            </android.support.v7.widget.Toolbar>
 
             <ImageView
                 android:layout_width="wrap_content"
