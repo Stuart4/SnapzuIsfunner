@@ -127,6 +127,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         mAdapter = new GridAdapter(this, R.layout.grid_item, posts);
         gridView.setAdapter(mAdapter);
 
+        //Endless scrolling
+        gridView.setOnScrollListener(new EndlessScrollListener());
 
         // bug 77712
         refresh.post(new Runnable() {
@@ -263,6 +265,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         mAdapter.notifyDataSetInvalidated();
         page = 1;
         gridView.setVisibility(View.GONE);
+        gridView.setOnScrollListener(new EndlessScrollListener());
         downloadPosts();
 
         updateTitle();
@@ -295,8 +298,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     // SENT FROM PopulatePosts
     @Subscribe
     public void onPostsError(PopulatePosts.PostsError postsError) {
-        Toast.makeText(this, "Network errors not implemented", Toast.LENGTH_SHORT).show();
-        refresh.setRefreshing(false);
+        page--;
+        downloadPosts();
     }
 
     // SENT FROM PopulateTribes
@@ -339,6 +342,12 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     @Produce
     public SinglePostPackage produceSinglePostPackage() {
         return new SinglePostPackage(this.post);
+    }
+
+    @Subscribe
+    public void onLoadMoreRequest(EndlessScrollListener.LoadMorePackage loadMorePackage) {
+        refresh.setRefreshing(true);
+        downloadPosts();
     }
 
 }
