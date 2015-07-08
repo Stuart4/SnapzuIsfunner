@@ -129,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         gridView.setAdapter(mAdapter);
 
         // bug 77712
+        refresh.setEnabled(false);
         refresh.post(new Runnable() {
             @Override
             public void run() {
