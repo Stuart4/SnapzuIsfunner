@@ -62,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     @Icicle int page = 1;
     @Icicle int drawerSelection = 5;
 
+    EndlessScrollListener endlessScrollListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -275,6 +277,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         refresh.setRefreshing(true);
         this.tribe = tribe;
         this.sorting = "/trending";
+        endlessScrollListener.setLoading(true);
         hideCards();
         downloadPosts();
 
@@ -310,7 +313,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         gridView.setVisibility(View.VISIBLE);
 
         refresh.setRefreshing(false);
-        gridView.setOnScrollListener(new EndlessScrollListener());
+        endlessScrollListener = new EndlessScrollListener();
+        gridView.setOnScrollListener(endlessScrollListener);
     }
 
     // SENT FROM PopulatePosts

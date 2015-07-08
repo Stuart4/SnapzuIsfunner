@@ -40,5 +40,9 @@ public class EndlessScrollListener implements AbsListView.OnScrollListener {
     public void onScrollStateChanged(AbsListView view, int scrollState) {
     }
 
+    public void setLoading(Boolean b) {
+        loading = b;
+    }
+
     public static class LoadMorePackage {}
 }
