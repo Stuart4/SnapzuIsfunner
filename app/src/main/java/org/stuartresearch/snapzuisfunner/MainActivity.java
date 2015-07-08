@@ -161,23 +161,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort) {
-           new MaterialDialog.Builder(this).title("Sorting").items(R.array.sorting).itemsCallback(new MaterialDialog.ListCallback() {
-               @Override
-               public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                   if (i == 0) {
-                       sorting = "/trending";
-                   } else if (i == 1) {
-                       sorting = "/newest";
-                   } else {
-                       sorting = "/topscores";
-                   }
-                   updateTitle();
-                   refresh.setRefreshing(true);
-                   endlessScrollListener.setLoading(true);
-                   hideCards();
-                   downloadPosts();
-               }
-           }).show();
+            showSortingDialog();
             return true;
         } else if (id == R.id.action_compose) {
             Toast.makeText(this, "Compose not implemented.", Toast.LENGTH_SHORT).show();
@@ -264,9 +248,14 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
     private void downloadPosts() {
         if (tribe.getName().equals("all")) {
-            new PopulatePosts(tribe, "", page++).execute();
+            if (page == 1) {
+                new PopulatePosts(tribe, sorting, "").execute();
+                page++;
+            } else {
+                new PopulatePosts(tribe, "", Integer.toString(page++)).execute();
+            }
         } else {
-            new PopulatePosts(tribe, sorting, page++).execute();
+            new PopulatePosts(tribe, sorting, Integer.toString(page++)).execute();
         }
     }
 
@@ -278,7 +267,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         refresh.setRefreshing(true);
         this.tribe = tribe;
         this.sorting = "/trending";
-        endlessScrollListener.setLoading(true);
+        if (endlessScrollListener != null)
+            endlessScrollListener.setLoading(true);
         hideCards();
         downloadPosts();
 
@@ -373,5 +363,42 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         downloadPosts();
     }
 
+    public void showSortingDialog() {
+        if (tribe.getName().equals("all")) {
+            new MaterialDialog.Builder(this).title("Sorting").items(R.array.all_sorting).itemsCallback(new MaterialDialog.ListCallback() {
+                @Override
+                public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+                    if (i == 0) {
+                        sorting = "/trending";
+                    } else if (i == 1) {
+                        sorting = "/new";
+                    }
+                    updateTitle();
+                    refresh.setRefreshing(true);
+                    endlessScrollListener.setLoading(true);
+                    hideCards();
+                    downloadPosts();
+                }
+            }).show();
+        } else {
+            new MaterialDialog.Builder(this).title("Sorting").items(R.array.sorting).itemsCallback(new MaterialDialog.ListCallback() {
+                @Override
+                public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+                    if (i == 0) {
+                        sorting = "/trending";
+                    } else if (i == 1) {
+                        sorting = "/newest";
+                    } else {
+                        sorting = "/topscores";
+                    }
+                    updateTitle();
+                    refresh.setRefreshing(true);
+                    endlessScrollListener.setLoading(true);
+                    hideCards();
+                    downloadPosts();
+                }
+            }).show();
+        }
+    }
 
 }

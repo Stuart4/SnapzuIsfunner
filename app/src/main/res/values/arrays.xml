@@ -5,4 +5,8 @@
         <item>Newest</item>
         <item>Top Scores</item>
     </string-array>
+    <string-array name="all_sorting">
+        <item>Trending</item>
+        <item>Newest</item>
+    </string-array>
 </resources>

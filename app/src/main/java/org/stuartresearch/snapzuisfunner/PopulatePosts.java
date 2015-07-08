@@ -15,9 +15,9 @@ public class PopulatePosts extends AsyncTask<Void, Void, Post[]> {
 
     String tribe;
     String sorting;
-    int page;
+    String page;
 
-    public PopulatePosts(Tribe tribe, String sorting, int page) {
+    public PopulatePosts(Tribe tribe, String sorting, String page) {
 
         this.tribe = tribe.getLink();
         this.sorting = sorting;
