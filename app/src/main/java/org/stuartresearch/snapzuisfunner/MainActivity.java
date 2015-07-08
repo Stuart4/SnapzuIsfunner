@@ -173,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                    }
                    updateTitle();
                    refresh.setRefreshing(true);
+                   endlessScrollListener.setLoading(true);
                    hideCards();
                    downloadPosts();
                }
