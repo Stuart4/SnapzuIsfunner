@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                    if (i == 0) {
                        sorting = "/trending";
                    } else if (i == 1) {
-                       sorting = "/new";
+                       sorting = "/newest";
                    } else {
                        sorting = "/topscores";
                    }
