@@ -39,6 +39,8 @@ dependencies {
     compile 'frankiesardo:icepick:3.0.2'
     provided 'frankiesardo:icepick-processor:3.0.2'
     compile 'com.sothree.slidinguppanel:library:3.0.0'
+    compile 'com.ms-square:etsyblur:0.1.1'
+    compile 'com.afollestad:material-dialogs:0.7.6.0'
     compile('com.mikepenz:materialdrawer:3.0.9@aar') {
         transitive = true
     }

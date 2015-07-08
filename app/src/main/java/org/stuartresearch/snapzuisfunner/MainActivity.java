@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.etsy.android.grid.StaggeredGridView;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     static ArrayList<Post> posts = new ArrayList<>(50);
 
     @Icicle String sorting = "/trending";
-    @Icicle Tribe tribe = new Tribe("Frontpage", "http://snapzu.com/list");
+    @Icicle Tribe tribe = new Tribe("all", "http://snapzu.com/list");
     Post post;
     @Icicle int page = 1;
     @Icicle int drawerSelection = 5;
@@ -127,9 +128,6 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         mAdapter = new GridAdapter(this, R.layout.grid_item, posts);
         gridView.setAdapter(mAdapter);
 
-        //Endless scrolling
-        gridView.setOnScrollListener(new EndlessScrollListener());
-
         // bug 77712
         refresh.post(new Runnable() {
             @Override
@@ -160,7 +158,22 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort) {
-            Toast.makeText(this, "Sort not implemented.", Toast.LENGTH_SHORT).show();
+           new MaterialDialog.Builder(this).title("Sorting").items(R.array.sorting).itemsCallback(new MaterialDialog.ListCallback() {
+               @Override
+               public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+                   if (i == 0) {
+                       sorting = "/trending";
+                   } else if (i == 1) {
+                       sorting = "/new";
+                   } else {
+                       sorting = "/topscores";
+                   }
+                   updateTitle();
+                   refresh.setRefreshing(true);
+                   hideCards();
+                   downloadPosts();
+               }
+           }).show();
             return true;
         } else if (id == R.id.action_compose) {
             Toast.makeText(this, "Compose not implemented.", Toast.LENGTH_SHORT).show();
@@ -246,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     }
 
     private void downloadPosts() {
-        if (tribe.getName().equals("Frontpage")) {
+        if (tribe.getName().equals("all")) {
             new PopulatePosts(tribe, "", page++).execute();
         } else {
             new PopulatePosts(tribe, sorting, page++).execute();
@@ -261,14 +274,17 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         refresh.setRefreshing(true);
         this.tribe = tribe;
         this.sorting = "/trending";
+        hideCards();
+        downloadPosts();
+
+        updateTitle();
+    }
+
+    public void hideCards() {
         posts.clear();
         mAdapter.notifyDataSetInvalidated();
         page = 1;
         gridView.setVisibility(View.GONE);
-        gridView.setOnScrollListener(new EndlessScrollListener());
-        downloadPosts();
-
-        updateTitle();
     }
 
 
@@ -293,13 +309,14 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         gridView.setVisibility(View.VISIBLE);
 
         refresh.setRefreshing(false);
+        gridView.setOnScrollListener(new EndlessScrollListener());
     }
 
     // SENT FROM PopulatePosts
     @Subscribe
     public void onPostsError(PopulatePosts.PostsError postsError) {
-        page--;
-        downloadPosts();
+        Toast.makeText(this, "Network errors not implemented", Toast.LENGTH_SHORT).show();
+        refresh.setRefreshing(false);
     }
 
     // SENT FROM PopulateTribes
@@ -349,5 +366,6 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         refresh.setRefreshing(true);
         downloadPosts();
     }
+
 
 }
