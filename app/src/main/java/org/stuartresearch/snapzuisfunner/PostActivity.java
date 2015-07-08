@@ -36,6 +36,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     @Bind(R.id.sliding_layout) SlidingUpPanelLayout slidingUpPanelLayout;
 
 
+
     Post post;
     Comment[] comments;
 
@@ -58,8 +59,6 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         ButterKnife.bind(this);
 
         MainActivity.bus.register(this);
-
-        Intent received = getIntent();
 
         setSupportActionBar(toolbar);
 
@@ -92,7 +91,6 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         // Load website
         mWebView.loadUrl(getIntent().getStringExtra("url"));
 
-        //Listview
 
     }
 
@@ -161,7 +159,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
                 Toast.makeText(this, "Up vote is not implemented.", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.post_2:
-                Toast.makeText(this, "Reload is not implemented.", Toast.LENGTH_SHORT).show();
+                new PopulateComments(post.getCommentsLink()).execute();
                 break;
             case R.id.post_3:
                 Toast.makeText(this, "Down vote is not implemented.", Toast.LENGTH_SHORT).show();
