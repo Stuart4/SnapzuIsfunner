@@ -39,10 +39,11 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     Post post;
     Comment[] comments;
 
-    MenuItem forward;
-    MenuItem backward;
-    MenuItem openInBrowser;
-    MenuItem fullscreen;
+    MenuItem arrowBackUp;
+    MenuItem arrowForwardDown;
+    MenuItem openInBrowserCompose;
+    MenuItem fullscreenSearch;
+    MenuItem readerSort;
 
     ListAdapter mListAdapter;
 
@@ -100,10 +101,11 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.post_menu, menu);
 
-        forward = menu.findItem(R.id.webview_forward);
-        backward = menu.findItem(R.id.webview_back);
-        openInBrowser = menu.findItem(R.id.webview_open_in_browser);
-        fullscreen = menu.findItem(R.id.webview_fullscreen);
+        arrowBackUp = menu.findItem(R.id.post_1);
+        arrowForwardDown = menu.findItem(R.id.post_3);
+        openInBrowserCompose = menu.findItem(R.id.post_4);
+        fullscreenSearch = menu.findItem(R.id.post_5);
+        readerSort = menu.findItem(R.id.post_6);
 
         return true;
     }
@@ -115,39 +117,79 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        if (showingComments) {
+            onCommentsItemSelected(id);
+        } else {
+            onWebviewItemSelected(id);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void onWebviewItemSelected(int id) {
         switch (id) {
-            case R.id.webview_back:
+            case R.id.post_1:
                 mWebView.goBack();
                 break;
-            case R.id.webview_refresh:
+            case R.id.post_2:
                 mWebView.reload();
                 break;
-            case R.id.webview_forward:
+            case R.id.post_3:
                 mWebView.goForward();
                 break;
-            case R.id.webview_open_in_browser:
+            case R.id.post_4:
                 Intent openInBrowser = new Intent(Intent.ACTION_VIEW, Uri.parse(mWebView.getUrl()));
                 startActivity(openInBrowser);
                 break;
-            case R.id.webview_share:
-                Intent share = new Intent(Intent.ACTION_SEND);
-                share.setType("text/plain");
-                share.putExtra(Intent.EXTRA_SUBJECT, post.getTitle()
-                );
-                share.putExtra(Intent.EXTRA_TEXT, mWebView.getUrl());
-                startActivity(Intent.createChooser(share, "Share Current Page"));
-                break;
-            case R.id.webview_fullscreen:
+            case R.id.post_5:
                 Toast.makeText(this, "Fullscreen is not implemented.", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.webview_more:
+            case R.id.post_6:
+                Toast.makeText(this, "Reader is not implemented.", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.post_7:
                 Toast.makeText(this, "More is not implemented.", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;
         }
+    }
 
-        return super.onOptionsItemSelected(item);
+    public void onCommentsItemSelected(int id) {
+        switch (id) {
+            case R.id.post_1:
+                Toast.makeText(this, "Up vote is not implemented.", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.post_2:
+                Toast.makeText(this, "Reload is not implemented.", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.post_3:
+                Toast.makeText(this, "Down vote is not implemented.", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.post_4:
+                Toast.makeText(this, "Compose is not implemented.", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.post_5:
+                Toast.makeText(this, "Search is not implemented.", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.post_6:
+                Toast.makeText(this, "Sort is not implemented.", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.post_7:
+                Toast.makeText(this, "More is not implemented.", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void sharePage() {
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("text/plain");
+        share.putExtra(Intent.EXTRA_SUBJECT, post.getTitle()
+        );
+        share.putExtra(Intent.EXTRA_TEXT, mWebView.getUrl());
+        startActivity(Intent.createChooser(share, "Share Current Page"));
     }
 
     @Override
@@ -212,19 +254,31 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     public void onPanelCollapsed(View view) {
         showingComments = false;
-        backward.setIcon(R.drawable.ic_arrow_back_black_24dp);
-        forward.setIcon(R.drawable.ic_arrow_forward_black_24dp);
-        openInBrowser.setIcon(R.drawable.ic_open_in_browser_black_24dp);
-        fullscreen.setIcon(R.drawable.ic_fullscreen_black_24dp);
+        arrowBackUp.setIcon(R.drawable.ic_arrow_back_black_24dp);
+        arrowBackUp.setTitle("Back");
+        arrowForwardDown.setIcon(R.drawable.ic_arrow_forward_black_24dp);
+        arrowBackUp.setTitle("Forward");
+        openInBrowserCompose.setIcon(R.drawable.ic_open_in_browser_black_24dp);
+        arrowBackUp.setTitle("Open In Browser");
+        fullscreenSearch.setIcon(R.drawable.ic_fullscreen_black_24dp);
+        arrowBackUp.setTitle("Fullscreen");
+        readerSort.setIcon(R.drawable.ic_book_black_24dp);
+        arrowBackUp.setTitle("Reader Mode");
     }
 
     @Override
     public void onPanelExpanded(View view) {
         showingComments = true;
-        backward.setIcon(R.drawable.ic_keyboard_arrow_up_black_24dp);
-        forward.setIcon(R.drawable.ic_keyboard_arrow_down_black_24dp);
-        openInBrowser.setIcon(R.drawable.ic_create_black_24dp);
-        fullscreen.setIcon(R.drawable.ic_sort_black_24dp);
+        arrowBackUp.setIcon(R.drawable.ic_keyboard_arrow_up_black_24dp);
+        arrowBackUp.setTitle("Up Vote");
+        arrowForwardDown.setIcon(R.drawable.ic_keyboard_arrow_down_black_24dp);
+        arrowBackUp.setTitle("Down Vote");
+        openInBrowserCompose.setIcon(R.drawable.ic_create_black_24dp);
+        arrowBackUp.setTitle("Compose");
+        fullscreenSearch.setIcon(R.drawable.ic_search_black_24dp);
+        arrowBackUp.setTitle("Search");
+        readerSort.setIcon(R.drawable.ic_sort_black_24dp);
+        arrowBackUp.setTitle("Sort");
     }
 
     @Override

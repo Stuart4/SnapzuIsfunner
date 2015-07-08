@@ -3,25 +3,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="org.stuartresearch.snapzuisfunner.PostActivity">
 
-    <item android:id="@+id/webview_back" android:title="Back"
+    <item android:id="@+id/post_1" android:title="Back"
         android:orderInCategory="1" app:showAsAction="always" android:icon="@drawable/ic_arrow_back_black_24dp" />
 
-    <item android:id="@+id/webview_refresh" android:title="Refresh"
+    <item android:id="@+id/post_2" android:title="Refresh"
         android:orderInCategory="2" app:showAsAction="always" android:icon="@drawable/ic_refresh_black_24dp" />
 
-    <item android:id="@+id/webview_forward" android:title="Forward"
+    <item android:id="@+id/post_3" android:title="Forward"
         android:orderInCategory="3" app:showAsAction="always" android:icon="@drawable/ic_arrow_forward_black_24dp"/>
 
-    <item android:id="@+id/webview_open_in_browser" android:title="Open In Browser"
+    <item android:id="@+id/post_4" android:title="Open In Browser"
         android:orderInCategory="4" app:showAsAction="always" android:icon="@drawable/ic_open_in_browser_black_24dp"/>
 
-    <item android:id="@+id/webview_share" android:title="Share"
-        android:orderInCategory="5" app:showAsAction="always" android:icon="@drawable/ic_share_black_24dp"/>
+    <item android:id="@+id/post_5" android:title="Fullscreen"
+        android:orderInCategory="5" app:showAsAction="always" android:icon="@drawable/ic_fullscreen_black_24dp"/>
 
-    <item android:id="@+id/webview_fullscreen" android:title="Fullscreen"
-        android:orderInCategory="6" app:showAsAction="always" android:icon="@drawable/ic_fullscreen_black_24dp"/>
+    <item android:id="@+id/post_6" android:title="Reader Mode"
+        android:orderInCategory="6" app:showAsAction="always" android:icon="@drawable/ic_book_black_24dp"/>
 
-    <item android:id="@+id/webview_more" android:title="More"
+    <item android:id="@+id/post_7" android:title="More"
         android:orderInCategory="100" app:showAsAction="always" android:icon="@drawable/ic_more_vert_black_24dp"/>
 
 </menu>
