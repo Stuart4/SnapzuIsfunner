@@ -128,8 +128,13 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         gridView.setAdapter(mAdapter);
 
 
-        // Should work, but bug 77712
-        refresh.setRefreshing(true);
+        // bug 77712
+        refresh.post(new Runnable() {
+            @Override
+            public void run() {
+                refresh.setRefreshing(true);
+            }
+        });
 
         // Fill posts
         downloadPosts();
