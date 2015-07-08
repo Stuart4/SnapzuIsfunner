@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrInterface;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.otto.Subscribe;
 
 import org.stuartresearch.SnapzuAPI.Comment;
@@ -27,18 +28,27 @@ import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 
 
-public class PostActivity extends AppCompatActivity implements View.OnTouchListener {
+public class PostActivity extends AppCompatActivity implements View.OnTouchListener, SlidingUpPanelLayout.PanelSlideListener{
 
     @Bind(R.id.post_webview) WebView mWebView;
     @Bind(R.id.post_toolbar) Toolbar toolbar;
     @Bind(R.id.comment_listview) ListView listView;
+    @Bind(R.id.sliding_layout) SlidingUpPanelLayout slidingUpPanelLayout;
+
 
     Post post;
     Comment[] comments;
 
+    MenuItem forward;
+    MenuItem backward;
+    MenuItem openInBrowser;
+    MenuItem fullscreen;
+
     ListAdapter mListAdapter;
 
     SlidrInterface slidrInterface;
+
+    boolean showingComments = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +71,9 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         // Sliding mechanism
         SlidrConfig config = new SlidrConfig.Builder().sensitivity(0.5f).build();
         slidrInterface = Slidr.attach(this, config);
+
+
+        slidingUpPanelLayout.setPanelSlideListener(this);
 
         // Butterknife does not work with webview?
         mWebView = (WebView) findViewById(R.id.post_webview);
@@ -86,6 +99,12 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.post_menu, menu);
+
+        forward = menu.findItem(R.id.webview_forward);
+        backward = menu.findItem(R.id.webview_back);
+        openInBrowser = menu.findItem(R.id.webview_open_in_browser);
+        fullscreen = menu.findItem(R.id.webview_fullscreen);
+
         return true;
     }
 
@@ -190,4 +209,36 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         Toast.makeText(this, "Comment selection is not implemented", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onPanelCollapsed(View view) {
+        showingComments = false;
+        backward.setIcon(R.drawable.ic_arrow_back_black_24dp);
+        forward.setIcon(R.drawable.ic_arrow_forward_black_24dp);
+        openInBrowser.setIcon(R.drawable.ic_open_in_browser_black_24dp);
+        fullscreen.setIcon(R.drawable.ic_fullscreen_black_24dp);
+    }
+
+    @Override
+    public void onPanelExpanded(View view) {
+        showingComments = true;
+        backward.setIcon(R.drawable.ic_keyboard_arrow_up_black_24dp);
+        forward.setIcon(R.drawable.ic_keyboard_arrow_down_black_24dp);
+        openInBrowser.setIcon(R.drawable.ic_create_black_24dp);
+        fullscreen.setIcon(R.drawable.ic_sort_black_24dp);
+    }
+
+    @Override
+    public void onPanelAnchored(View view) {
+
+    }
+
+    @Override
+    public void onPanelHidden(View view) {
+
+    }
+
+    @Override
+    public void onPanelSlide(View view, float v) {
+
+    }
 }
