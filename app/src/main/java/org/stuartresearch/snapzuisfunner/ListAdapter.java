@@ -1,6 +1,7 @@
 package org.stuartresearch.snapzuisfunner;
 
 import android.content.Context;
+import android.text.Html;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,8 +38,11 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         ViewHolder viewHolder;
 
         Comment object = objects[position];
-        String title = object.getUser();
+        String user = object.getUser();
+        String vote = object.getVote();
+        String date = object.getDate();
         String paragraph = object.getParagraph();
+        String color = "#D32F2F";
         int indent = object.getIndent() * 4;
 
 
@@ -50,13 +54,18 @@ public class ListAdapter extends ArrayAdapter<Comment> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
+        if (Float.parseFloat(vote) > 0) {
+            color = "#1976D2";
+        }
 
         viewHolder.title = (TextView) convertView.findViewById(R.id.comment_title);
         viewHolder.paragraph = (TextView) convertView.findViewById(R.id.comment_paragraph);
         viewHolder.intent = (ImageView) convertView.findViewById(R.id.comment_indent);
 
 
-        viewHolder.title.setText(title);
+        viewHolder.title.setText(Html.fromHtml(String.format(
+                "<font color=\"%s\">%s</font> • <b>%s</b> • %s"
+                , color, vote, user, date)));
         viewHolder.paragraph.setText(paragraph);
         viewHolder.intent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) indent, convertView.getResources().getDisplayMetrics()) + 0.5f);
         viewHolder.intent.requestLayout();

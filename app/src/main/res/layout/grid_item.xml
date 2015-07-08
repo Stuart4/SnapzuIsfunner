@@ -41,7 +41,8 @@
         android:elegantTextHeight="false"
         android:autoText="false"
         android:paddingLeft="20dp"
-        android:paddingRight="20dp"/>
+        android:paddingRight="20dp"
+        android:paddingTop="20dp"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -58,28 +59,17 @@
         android:paddingRight="20dp"/>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="User"
-        android:id="@+id/grid_user"
-        android:layout_gravity="left|bottom"
-        android:layout_below="@+id/grid_paragraph"
-        android:textColor="@color/primary_text"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:paddingRight="20dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Score"
-        android:id="@+id/grid_score"
+        android:text="Extras"
+        android:id="@+id/grid_extra"
         android:layout_gravity="center_horizontal|bottom"
         android:layout_below="@+id/grid_paragraph"
-        android:textColor="@color/primary_text"
+        android:textColor="@color/md_grey_600"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:paddingLeft="20dp"
-        android:paddingRight="0dp" />
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp"/>
 
 </RelativeLayout>

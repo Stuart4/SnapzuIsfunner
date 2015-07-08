@@ -1,6 +1,7 @@
 package org.stuartresearch.snapzuisfunner;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import com.etsy.android.grid.util.DynamicHeightImageView;
 import com.squareup.picasso.Picasso;
 
 import org.stuartresearch.SnapzuAPI.Post;
+import org.stuartresearch.SnapzuAPI.Tribe;
 
 import java.util.ArrayList;
 
@@ -32,8 +34,7 @@ public class GridAdapter extends ArrayAdapter<Post> {
 
     static class ViewHolder {
         DynamicHeightImageView imgView;
-        TextView user;
-        TextView score;
+        TextView extra;
         TextView title;
         TextView paragraph;
     }
@@ -45,9 +46,14 @@ public class GridAdapter extends ArrayAdapter<Post> {
         Post object = objects.get(position);
         String score = object.getScore();
         String user = object.getUser();
+        String comments = object.getComments();
         String title = object.getTitle();
         String paragraph = object.getParagraph();
         String imageUrl = object.getItemImage();
+        String tribe = tribesToString(object.getTribes());
+        String date = object.getDate();
+        String type = object.getType();
+        String color = "#D32F2F";
 
 
         if (convertView == null) {
@@ -59,14 +65,17 @@ public class GridAdapter extends ArrayAdapter<Post> {
         }
 
         viewHolder.imgView = (DynamicHeightImageView) convertView.findViewById(R.id.grid_image);
-        viewHolder.user = (TextView) convertView.findViewById(R.id.grid_user);
-        viewHolder.score = (TextView) convertView.findViewById(R.id.grid_score);
+        viewHolder.extra = (TextView) convertView.findViewById(R.id.grid_extra);
         viewHolder.title = (TextView) convertView.findViewById(R.id.grid_title);
         viewHolder.paragraph = (TextView) convertView.findViewById(R.id.grid_paragraph);
 
+        if (Float.parseFloat(score) > 0) {
+            color = "#1976D2";
+        }
 
-        viewHolder.user.setText(user);
-        viewHolder.score.setText(score);
+        viewHolder.extra.setText(Html.fromHtml(String.format(
+                "<font color=\"%s\">%s</font> • <b>%s</b> • %s • %s • %s • %s"
+                , color, score, user, type, comments, date, tribe)));
         viewHolder.title.setText(title);
         viewHolder.paragraph.setText(paragraph);
 
@@ -77,14 +86,28 @@ public class GridAdapter extends ArrayAdapter<Post> {
             viewHolder.imgView.setVisibility(View.GONE);
         }
 
-        if (Float.parseFloat(score) > 0) {
-            viewHolder.score.setTextColor(R.color.md_blue_400);
-        } else {
-            viewHolder.score.setTextColor(R.color.md_red_400);
-        }
+
 
         viewHolder.imgView.setHeightRatio(0.7);
 
         return convertView;
+    }
+
+    private String tribesToString(Tribe[] tribes) {
+        if (tribes.length == 0) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder(tribes[0].getName());
+
+        for (int i = 1; i < tribes.length && i < 3; i++) {
+            sb.append(" " + tribes[i].getName());
+        }
+
+        if (tribes.length > 3) {
+            sb.append('…');
+        }
+
+        return sb.toString();
     }
 }

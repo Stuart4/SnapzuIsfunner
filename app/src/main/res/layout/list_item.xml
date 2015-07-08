@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/comment_title"
-            android:textColor="@color/primary_text"
+            android:textColor="@color/md_grey_600"
             android:text="Hi there" />
 
         <TextView
