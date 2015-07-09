@@ -1,6 +1,8 @@
 package org.stuartresearch.snapzuisfunner;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +34,8 @@ import org.stuartresearch.SnapzuAPI.Post;
 import org.stuartresearch.SnapzuAPI.Tribe;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -47,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     @Bind(R.id.grid_view) StaggeredGridView gridView;
     @Bind(R.id.pull_to_refresh) SwipeRefreshLayout refresh;
 
-    public static Bus bus = new Bus(ThreadEnforcer.MAIN);
+    public static Bus bus = new Bus(ThreadEnforcer.ANY);
 
     Drawer drawer;
     GridAdapter mAdapter;
@@ -61,6 +65,9 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     Post post;
     @Icicle int page = 1;
     @Icicle int drawerSelection = 5;
+    @Icicle String profile;
+
+    Pattern findProfile = Pattern.compile("(profile=)(\\w+)");
 
     EndlessScrollListener endlessScrollListener;
 
@@ -153,7 +160,6 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         }
 
 
-
     }
 
     @Override
@@ -229,6 +235,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             // Settings
             case -1:
                 Toast.makeText(this, "Settings is not implemented", Toast.LENGTH_SHORT).show();
+                Intent login = new Intent(this, Login.class);
+                startActivity(login);
                 break;
             // Tribe Selected
             default:
@@ -409,6 +417,25 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                     downloadPosts();
                 }
             }).show();
+        }
+    }
+
+    @Subscribe
+    public void onLogin(Login.LoginPackage loginPackage) {
+        String cookies = loginPackage.cookies;
+        if (cookies.split(";").length == 7) {
+            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("cookies", cookies);
+            editor.commit();
+            Matcher matcher = findProfile.matcher(cookies);
+            if (matcher.find()) {
+                profile = matcher.group(2);
+                Toast.makeText(this, profile, Toast.LENGTH_SHORT).show();
+            }
+            Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Login Failed", Toast.LENGTH_LONG).show();
         }
     }
 

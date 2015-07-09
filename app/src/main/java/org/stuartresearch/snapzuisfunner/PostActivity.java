@@ -88,7 +88,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         settings.setJavaScriptEnabled(true);
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
-        mWebView.setWebViewClient(new CustomWebViewClient());
+        mWebView.setWebViewClient(new PostWebClient());
 
         // Load website
         mWebView.loadUrl(getIntent().getStringExtra("url"));
@@ -232,7 +232,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         Toast.makeText(this, "Network error is not implemented", Toast.LENGTH_SHORT).show();
     }
 
-    private static class CustomWebViewClient extends WebViewClient {
+    private static class PostWebClient extends WebViewClient {
 
         public boolean shouldOverrideUrlLoading(WebView view, String url)
         {
