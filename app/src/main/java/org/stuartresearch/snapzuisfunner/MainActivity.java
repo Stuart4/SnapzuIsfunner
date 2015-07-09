@@ -117,8 +117,6 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
 
 
-        // Receive updates from other components
-        bus.register(this);
 
         // Fill tribes list
         if (tribes == null)
@@ -134,6 +132,9 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         refresh.setEnabled(false);
 
         if (savedInstanceState == null) {
+            // Receive updates from other components
+            bus.register(this);
+
             // bug 77712
             refresh.post(new Runnable() {
                 @Override
@@ -145,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             // Fill posts
             downloadPosts();
         } else {
+            // or else will not loading on orientation change
             endlessScrollListener = new EndlessScrollListener();
             gridView.setOnScrollListener(endlessScrollListener);
 
