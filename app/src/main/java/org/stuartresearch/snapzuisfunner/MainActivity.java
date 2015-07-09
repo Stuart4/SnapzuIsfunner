@@ -82,27 +82,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         updateTitle();
 
         // Build account header_back
-        AccountHeader headerResult = new AccountHeaderBuilder()
-                .withActivity(this)
-                .withHeaderBackground(R.drawable.header)
-                .withOnAccountHeaderListener(this)
-                .build();
-
-        drawer = new DrawerBuilder().withActivity(this).withTranslucentStatusBar(false)
-                .withActionBarDrawerToggle(true)
-                .withToolbar(toolbar)
-                .withSelectedItem(drawerSelection)
-                .addDrawerItems(
-                        new PrimaryDrawerItem().withName("Profile").withIcon(R.drawable.ic_account_box_black_18dp).withCheckable(false),
-                        new PrimaryDrawerItem().withName("Messages").withIcon(R.drawable.ic_message_black_18dp).withCheckable(false),
-                        new PrimaryDrawerItem().withName("Open User").withIcon(R.drawable.ic_group_black_18dp).withCheckable(false),
-                        new PrimaryDrawerItem().withName("Open Tribe").withIcon(R.drawable.ic_filter_tilt_shift_black_18dp).withCheckable(false),
-                        new DividerDrawerItem()
-                )
-                .addStickyDrawerItems(
-                        new PrimaryDrawerItem().withName("Settings").withIcon(R.drawable.ic_settings_black_18dp).withCheckable(false)
-                ).withOnDrawerItemClickListener(this)
-                .build();
+       updateDrawer();
 
         //Make hamburger appear and function
         drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
@@ -236,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     @Override
     public boolean onProfileChanged(View view, IProfile iProfile, boolean b) {
         Toast.makeText(this, String.format("Almost logged in as %s", iProfile.getName()), Toast.LENGTH_SHORT).show();
-        return false;
+        return true;
     }
 
 
@@ -424,7 +404,21 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         AccountHeader headerResult = headerBuilder.build();
 
         if (drawer == null) {
-
+            drawer = new DrawerBuilder().withActivity(this).withTranslucentStatusBar(false)
+                    .withActionBarDrawerToggle(true)
+                    .withToolbar(toolbar)
+                    .withSelectedItem(drawerSelection)
+                    .addDrawerItems(
+                            new PrimaryDrawerItem().withName("Profile").withIcon(R.drawable.ic_account_box_black_18dp).withCheckable(false),
+                            new PrimaryDrawerItem().withName("Messages").withIcon(R.drawable.ic_message_black_18dp).withCheckable(false),
+                            new PrimaryDrawerItem().withName("Open User").withIcon(R.drawable.ic_group_black_18dp).withCheckable(false),
+                            new PrimaryDrawerItem().withName("Open Tribe").withIcon(R.drawable.ic_filter_tilt_shift_black_18dp).withCheckable(false),
+                            new DividerDrawerItem()
+                    )
+                    .addStickyDrawerItems(
+                            new PrimaryDrawerItem().withName("Settings").withIcon(R.drawable.ic_settings_black_18dp).withCheckable(false)
+                    ).withOnDrawerItemClickListener(this)
+                    .build();
         }
 
         if (drawer.getHeader() != null) {
