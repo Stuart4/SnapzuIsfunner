@@ -9,8 +9,12 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -20,6 +24,9 @@ public class Login extends ActionBarActivity {
 
     @Bind(R.id.login_webview) WebView webView;
     public static final String LOGIN_URL = "http://snapzu.com/login";
+
+    Pattern findProfile = Pattern.compile("(profile=)(\\w+)");
+
 
 
     @Override
@@ -96,8 +103,22 @@ public class Login extends ActionBarActivity {
 
     @JavascriptInterface
     public void showCookies(String cookies) {
-        MainActivity.bus.post(new LoginPackage(cookies));
-        finish();
+        makeProfile(cookies);
+    }
+
+    public void makeProfile(String cookies) {
+        if (cookies.split(";").length == 7) {
+            Matcher matcher = findProfile.matcher(cookies);
+            if (matcher.find()) {
+                String username = matcher.group(2);
+                Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
+                Profile profile = new Profile(username, cookies);
+                new AddPictureToProfile(profile).execute();
+                finish();
+            }
+        } else {
+            Toast.makeText(this, "Login Failed", Toast.LENGTH_LONG).show();
+        }
     }
 
     public class LoginPackage {

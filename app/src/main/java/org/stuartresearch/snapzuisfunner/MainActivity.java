@@ -1,8 +1,6 @@
 package org.stuartresearch.snapzuisfunner;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +19,6 @@ import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
@@ -34,8 +31,7 @@ import org.stuartresearch.SnapzuAPI.Post;
 import org.stuartresearch.SnapzuAPI.Tribe;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -51,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     @Bind(R.id.grid_view) StaggeredGridView gridView;
     @Bind(R.id.pull_to_refresh) SwipeRefreshLayout refresh;
 
-    public static Bus bus = new Bus(ThreadEnforcer.ANY);
+    public static Bus bus = new Bus(ThreadEnforcer.MAIN);
 
     Drawer drawer;
     GridAdapter mAdapter;
@@ -65,9 +61,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     Post post;
     @Icicle int page = 1;
     @Icicle int drawerSelection = 5;
-    @Icicle String profile;
+    @Icicle String profile = "";
 
-    Pattern findProfile = Pattern.compile("(profile=)(\\w+)");
 
     EndlessScrollListener endlessScrollListener;
 
@@ -86,27 +81,16 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         // Set titles
         updateTitle();
 
-        // Build account header
+        // Build account header_back
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)
-                .addProfiles(
-                        new ProfileDrawerItem().withName("SubZeroJake").withEmail("jake@spacejake.com").withIcon(getResources().getDrawable(R.drawable.profile)),
-                        new ProfileDrawerItem().withName("vexix11").withEmail("the_jake@sbcglobal.net")
-                )
-                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-                    @Override
-                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
-                        return false;
-                    }
-                }).withOnAccountHeaderListener(this)
+                .withOnAccountHeaderListener(this)
                 .build();
 
-        // Build drawer
         drawer = new DrawerBuilder().withActivity(this).withTranslucentStatusBar(false)
                 .withActionBarDrawerToggle(true)
                 .withToolbar(toolbar)
-                .withAccountHeader(headerResult)
                 .withSelectedItem(drawerSelection)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName("Profile").withIcon(R.drawable.ic_account_box_black_18dp).withCheckable(false),
@@ -420,23 +404,52 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         }
     }
 
-    @Subscribe
-    public void onLogin(Login.LoginPackage loginPackage) {
-        String cookies = loginPackage.cookies;
-        if (cookies.split(";").length == 7) {
-            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putString("cookies", cookies);
-            editor.commit();
-            Matcher matcher = findProfile.matcher(cookies);
-            if (matcher.find()) {
-                profile = matcher.group(2);
-                Toast.makeText(this, profile, Toast.LENGTH_SHORT).show();
-            }
-            Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Login Failed", Toast.LENGTH_LONG).show();
+    public void updateDrawer() {
+        AccountHeaderBuilder headerBuilder = new AccountHeaderBuilder()
+                    .withActivity(this)
+                    .withHeaderBackground(R.drawable.header)
+                    .withOnAccountHeaderListener(this);
+
+        List<Profile> profiles;
+        try {
+            profiles = Profile.listAll(Profile.class);
+        } catch (Exception e) {
+            profiles = new ArrayList<>(0);
         }
+
+        for (int i = 0; i < profiles.size(); i++) {
+            headerBuilder.addProfiles(profiles.get(i).toProfileDrawerItem());
+        }
+
+        AccountHeader headerResult = headerBuilder.build();
+
+        if (drawer == null) {
+
+        }
+
+        if (drawer.getHeader() != null) {
+            drawer.removeHeader();
+        }
+
+        drawer.setHeader(headerResult.getView());
+
+    }
+
+    @Subscribe
+    public void onProfile(AddPictureToProfile.ProfilePicturePackage profilePicturePackage) {
+        updateDrawer();
+    }
+
+    @Subscribe
+    public void onProfileError(AddPictureToProfile.ProfilePictureError profilePictureError) {
+
+    }
+
+
+    @Subscribe
+    public void onPicturedAdded(AddPictureToProfile.ProfilePicturePackage profilePicturePackage) {
+        profilePicturePackage.profile.save();
+        updateDrawer();
     }
 
 }
