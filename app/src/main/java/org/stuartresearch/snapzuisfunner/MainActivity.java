@@ -130,17 +130,26 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         mAdapter = new GridAdapter(this, R.layout.grid_item, posts);
         gridView.setAdapter(mAdapter);
 
-        // bug 77712
-        refresh.setEnabled(false);
-        refresh.post(new Runnable() {
-            @Override
-            public void run() {
-                refresh.setRefreshing(true);
-            }
-        });
 
-        // Fill posts
-        downloadPosts();
+        refresh.setEnabled(false);
+
+        if (savedInstanceState == null) {
+            // bug 77712
+            refresh.post(new Runnable() {
+                @Override
+                public void run() {
+                    refresh.setRefreshing(true);
+                }
+            });
+
+            // Fill posts
+            downloadPosts();
+        } else {
+            endlessScrollListener = new EndlessScrollListener();
+            gridView.setOnScrollListener(endlessScrollListener);
+
+        }
+
 
 
     }
