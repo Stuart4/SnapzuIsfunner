@@ -25,7 +25,7 @@ public class AddPictureToProfile extends AsyncTask<Void, Void, Profile> {
         Soup soup = new Soup();
 
         try {
-            user.setImageUrl(soup.getPicture(address + "/" + user.getName()));
+            user.setImageUrl(soup.getPicture(address + user.getName()));
             return user;
         } catch (IOException dropIt) {}
 

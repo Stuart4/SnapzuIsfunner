@@ -1,6 +1,9 @@
 package org.stuartresearch.snapzuisfunner;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -22,10 +26,12 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 import com.squareup.otto.ThreadEnforcer;
+import com.squareup.picasso.Picasso;
 
 import org.stuartresearch.SnapzuAPI.Post;
 import org.stuartresearch.SnapzuAPI.Tribe;
@@ -81,6 +87,24 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         // Set titles
         updateTitle();
 
+        // Load avatars with Picasso in header
+        DrawerImageLoader.init(new DrawerImageLoader.IDrawerImageLoader() {
+            @Override
+            public void set(ImageView imageView, Uri uri, Drawable drawable) {
+                Picasso.with(imageView.getContext()).load(uri).placeholder(R.drawable.profile).into(imageView);
+            }
+
+            @Override
+            public void cancel(ImageView imageView) {
+                Picasso.with(imageView.getContext()).cancelRequest(imageView);
+            }
+
+            @Override
+            public Drawable placeholder(Context context) {
+                return null;
+            }
+        });
+
         // Build account header_back
        updateDrawer();
 
@@ -123,6 +147,9 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
         }
 
+
+        //TODO REMOVE FROM PRODUCTION
+        Profile.deleteAll(Profile.class);
 
     }
 
