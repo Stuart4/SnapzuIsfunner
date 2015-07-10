@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.stuartresearch.SnapzuAPI.Comment;
+import org.stuartresearch.SnapzuAPI.Post;
 
 /**
  * Created by jake on 7/7/15.
@@ -19,16 +20,19 @@ public class ListAdapter extends ArrayAdapter<Comment> {
     private final LayoutInflater mLayoutInflater;
     private Comment[] objects;
     private int layoutResource;
+    private Post post;
 
-    public ListAdapter(Context context, int resource, Comment[] objects) {
+    public ListAdapter(Context context, int resource, Comment[] objects, Post post) {
         super(context, resource, objects);
         this.layoutResource = resource;
         this.objects = objects;
         mLayoutInflater = LayoutInflater.from(context);
+        this.post = post;
     }
 
     static class ViewHolder {
         ImageView intent;
+        ImageView postIndent;
         TextView title;
         TextView paragraph;
     }
@@ -36,15 +40,6 @@ public class ListAdapter extends ArrayAdapter<Comment> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
-
-        Comment object = objects[position];
-        String user = object.getUser();
-        String vote = object.getVote();
-        String date = object.getDate();
-        String paragraph = object.getParagraph();
-        String color = "#D32F2F";
-        int indent = object.getIndent() * 4;
-
 
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(layoutResource, parent, false);
@@ -54,23 +49,61 @@ public class ListAdapter extends ArrayAdapter<Comment> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        if (!vote.isEmpty() && Float.parseFloat(vote) > 0) {
-            color = "#1976D2";
-        }
-
         viewHolder.title = (TextView) convertView.findViewById(R.id.comment_title);
         viewHolder.paragraph = (TextView) convertView.findViewById(R.id.comment_paragraph);
         viewHolder.intent = (ImageView) convertView.findViewById(R.id.comment_indent);
+        viewHolder.postIndent = (ImageView) convertView.findViewById(R.id.post_padding);
 
+        if (position == 0) {
+            String color = "#D32F2F";
+            String vote = post.getScore();
+            String date = post.getDate();
+            String paragraph = post.getParagraph();
+            String title = post.getTitle();
+            String user = post.getUser();
+
+            if (!vote.isEmpty() && Float.parseFloat(vote) > 0) {
+                color = "#1976D2";
+            }
+
+            viewHolder.title.setText(Html.fromHtml(String.format(
+                    "<h1>%s</h1><br><font color=\"%s\">%s</font> • <b>%s</b> • %s",
+                    title, color, vote, user, date)));
+            viewHolder.paragraph.setText(paragraph);
+
+            viewHolder.postIndent.setVisibility(View.VISIBLE);
+
+            return convertView;
+        }
+
+        Comment object = objects[position - 1];
+        String user = object.getUser();
+        String vote = object.getVote();
+        String date = object.getDate();
+        String paragraph = object.getParagraph();
+        String color = "#D32F2F";
+        int indent = object.getIndent() * 4;
+
+
+
+        if (!vote.isEmpty() && Float.parseFloat(vote) > 0) {
+            color = "#1976D2";
+        }
 
         viewHolder.title.setText(Html.fromHtml(String.format(
                 "<font color=\"%s\">%s</font> • <b>%s</b> • %s"
                 , color, vote, user, date)));
         viewHolder.paragraph.setText(paragraph);
+        viewHolder.postIndent.setVisibility(View.GONE);
         viewHolder.intent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) indent, convertView.getResources().getDisplayMetrics()) + 0.5f);
         viewHolder.intent.requestLayout();
 
         return convertView;
+    }
+
+    @Override
+    public int getCount() {
+        return objects.length + 1;
     }
 
 }

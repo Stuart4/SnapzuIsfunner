@@ -231,7 +231,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     @Subscribe
     public void onCommentsReceive(PopulateComments.CommentsPackage commentsPackage) {
         this.comments = commentsPackage.comments;
-        mListAdapter = new ListAdapter(this, R.layout.list_item, comments);
+        mListAdapter = new ListAdapter(this, R.layout.list_item, comments, post);
         listView.setAdapter(mListAdapter);
         mListAdapter.notifyDataSetChanged();
     }
