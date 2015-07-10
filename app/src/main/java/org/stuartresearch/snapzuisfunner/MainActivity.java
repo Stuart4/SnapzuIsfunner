@@ -324,6 +324,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         this.post = posts.get(position);
         Intent i = new Intent(this, PostActivity.class);
         i.putExtra("url", this.post.getLink());
+        i.putExtra("cookies", profile.cookies);
         startActivity(i);
     }
 

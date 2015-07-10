@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -90,8 +91,16 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         settings.setDisplayZoomControls(false);
         mWebView.setWebViewClient(new PostWebClient());
 
+        Intent intent = getIntent();
+
+        // Get the right cookies in there
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setAcceptCookie(true);
+        cookieManager.removeAllCookie();
+        cookieManager.setCookie(MainActivity.address, intent.getStringExtra("cookies"));
+
         // Load website
-        mWebView.loadUrl(getIntent().getStringExtra("url"));
+        mWebView.loadUrl(intent.getStringExtra("url"));
 
 
     }
