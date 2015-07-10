@@ -117,7 +117,8 @@ public class Login extends ActionBarActivity {
                 finish();
             }
         } else {
-            Toast.makeText(this, "Login Failed", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Login failed. Did you select remember me?", Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 
