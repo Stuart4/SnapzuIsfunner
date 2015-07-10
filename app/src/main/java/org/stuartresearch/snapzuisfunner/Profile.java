@@ -3,10 +3,12 @@ package org.stuartresearch.snapzuisfunner;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.orm.SugarRecord;
 
+import java.io.Serializable;
+
 /**
  * Created by jake on 7/9/15.
  */
-public class Profile extends SugarRecord<Profile> {
+public class Profile extends SugarRecord<Profile> implements Serializable{
     String name;
     String imageUrl;
     String cookies;

@@ -17,12 +17,15 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.etsy.android.grid.StaggeredGridView;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
@@ -56,8 +59,10 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     public static Bus bus = new Bus(ThreadEnforcer.MAIN);
 
     Drawer drawer;
+    AccountHeader accountHeader;
     GridAdapter mAdapter;
     @Icicle Tribe[] tribes;
+    List<Profile> profiles;
 
     //ATTN: HAS TO BE STATIC - Don't ask me why.
     static ArrayList<Post> posts = new ArrayList<>(50);
@@ -67,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     Post post;
     @Icicle int page = 1;
     @Icicle int drawerSelection = 5;
-    @Icicle String profile = "";
+    @Icicle Profile profile;
 
 
     EndlessScrollListener endlessScrollListener;
@@ -106,7 +111,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         });
 
         // Build account header_back
-       updateDrawer();
+        accountHeader = generateAccounterHeader();
+       drawer = generateDrawer();
 
         //Make hamburger appear and function
         drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
@@ -226,8 +232,6 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             // Settings
             case -1:
                 Toast.makeText(this, "Settings is not implemented", Toast.LENGTH_SHORT).show();
-                Intent login = new Intent(this, Login.class);
-                startActivity(login);
                 break;
             // Tribe Selected
             default:
@@ -242,8 +246,22 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     // ACCOUNT SELECTED
     @Override
     public boolean onProfileChanged(View view, IProfile iProfile, boolean b) {
-        Toast.makeText(this, String.format("Almost logged in as %s", iProfile.getName()), Toast.LENGTH_SHORT).show();
-        return true;
+        //sample usage of the onProfileChanged listener
+        //if the clicked item has the identifier 1 add a new profile ;)
+        if (iProfile instanceof IDrawerItem) {
+            if (iProfile.getIdentifier() == -1) {
+                Intent i = new Intent(this, Login.class);
+                startActivity(i);
+            } else if (iProfile.getIdentifier() == -2) {
+                Toast.makeText(this, "Manage Accounts is not implemented", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            profile = profiles.get(iProfile.getIdentifier());
+            Toast.makeText(this, String.format("Logged in as %s", profile.getName()), Toast.LENGTH_SHORT).show();
+        }
+
+        //false if you have not consumed the event and it should close the drawer
+        return false;
     }
 
 
@@ -411,13 +429,14 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         }
     }
 
-    public void updateDrawer() {
+    public AccountHeader generateAccounterHeader() {
         AccountHeaderBuilder headerBuilder = new AccountHeaderBuilder()
-                    .withActivity(this)
-                    .withHeaderBackground(R.drawable.header)
-                    .withOnAccountHeaderListener(this);
+                .withActivity(this)
+                .withHeaderBackground(R.drawable.header)
+                .withSelectionListEnabled(true)
+                .withSelectionListEnabledForSingleProfile(true)
+                .withOnAccountHeaderListener(this);
 
-        List<Profile> profiles;
         try {
             profiles = Profile.listAll(Profile.class);
         } catch (Exception e) {
@@ -425,40 +444,39 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         }
 
         for (int i = 0; i < profiles.size(); i++) {
-            headerBuilder.addProfiles(profiles.get(i).toProfileDrawerItem());
+            headerBuilder.addProfiles(profiles.get(i).toProfileDrawerItem().withIdentifier(i));
         }
 
-        AccountHeader headerResult = headerBuilder.build();
+        headerBuilder.addProfiles(
+                new ProfileSettingDrawerItem().withName("Add Account").withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add).actionBarSize().paddingDp(5).colorRes(R.color.material_drawer_primary_text)).withIdentifier(-1),
+                new ProfileSettingDrawerItem().withName("Manage Accounts").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(-2)
+        );
 
-        if (drawer == null) {
-            drawer = new DrawerBuilder().withActivity(this).withTranslucentStatusBar(false)
-                    .withActionBarDrawerToggle(true)
-                    .withToolbar(toolbar)
-                    .withSelectedItem(drawerSelection)
-                    .addDrawerItems(
-                            new PrimaryDrawerItem().withName("Profile").withIcon(R.drawable.ic_account_box_black_18dp).withCheckable(false),
-                            new PrimaryDrawerItem().withName("Messages").withIcon(R.drawable.ic_message_black_18dp).withCheckable(false),
-                            new PrimaryDrawerItem().withName("Open User").withIcon(R.drawable.ic_group_black_18dp).withCheckable(false),
-                            new PrimaryDrawerItem().withName("Open Tribe").withIcon(R.drawable.ic_filter_tilt_shift_black_18dp).withCheckable(false),
-                            new DividerDrawerItem()
-                    )
-                    .addStickyDrawerItems(
-                            new PrimaryDrawerItem().withName("Settings").withIcon(R.drawable.ic_settings_black_18dp).withCheckable(false)
-                    ).withOnDrawerItemClickListener(this)
-                    .build();
-        }
 
-        if (drawer.getHeader() != null) {
-            drawer.removeHeader();
-        }
+        return headerBuilder.build();
+    }
 
-        drawer.setHeader(headerResult.getView());
-
+    public Drawer generateDrawer() {
+        return new DrawerBuilder().withActivity(this).withTranslucentStatusBar(false)
+                .withActionBarDrawerToggle(true)
+                .withToolbar(toolbar)
+                .withAccountHeader(accountHeader)
+                .withSelectedItem(drawerSelection)
+                .addDrawerItems(
+                        new PrimaryDrawerItem().withName("Profile").withIcon(R.drawable.ic_account_box_black_18dp).withCheckable(false),
+                        new PrimaryDrawerItem().withName("Messages").withIcon(R.drawable.ic_message_black_18dp).withCheckable(false),
+                        new PrimaryDrawerItem().withName("Open User").withIcon(R.drawable.ic_group_black_18dp).withCheckable(false),
+                        new PrimaryDrawerItem().withName("Open Tribe").withIcon(R.drawable.ic_filter_tilt_shift_black_18dp).withCheckable(false),
+                        new DividerDrawerItem()
+                )
+                .addStickyDrawerItems(
+                        new PrimaryDrawerItem().withName("Settings").withIcon(R.drawable.ic_settings_black_18dp).withCheckable(false)
+                ).withOnDrawerItemClickListener(this)
+                .build();
     }
 
     @Subscribe
     public void onProfile(AddPictureToProfile.ProfilePicturePackage profilePicturePackage) {
-        updateDrawer();
     }
 
     @Subscribe
@@ -470,7 +488,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     @Subscribe
     public void onPicturedAdded(AddPictureToProfile.ProfilePicturePackage profilePicturePackage) {
         profilePicturePackage.profile.save();
-        updateDrawer();
+        accountHeader.addProfile(profilePicturePackage.profile.toProfileDrawerItem(), accountHeader.getProfiles().size() - 2);
     }
 
 }
