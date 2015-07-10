@@ -1,8 +1,7 @@
 package org.stuartresearch.snapzuisfunner;
 
 import android.os.AsyncTask;
-
-import com.mikepenz.materialdrawer.Drawer;
+import android.support.annotation.Nullable;
 
 import org.stuartresearch.SnapzuAPI.Soup;
 import org.stuartresearch.SnapzuAPI.Tribe;
@@ -14,10 +13,10 @@ import java.io.IOException;
  */
 public class PopulateTribes extends AsyncTask<Void, Void, Tribe[]> {
 
-    Drawer drawer;
+    Profile profile;
 
-    public PopulateTribes(Drawer drawer) {
-        this.drawer = drawer;
+    public PopulateTribes(@Nullable Profile profile) {
+        this.profile = profile;
     }
 
 
@@ -26,7 +25,11 @@ public class PopulateTribes extends AsyncTask<Void, Void, Tribe[]> {
         Soup soup = new Soup();
 
         try {
-            return soup.getTribes();
+            if (profile != null) {
+                return soup.getTribes(MainActivity.address + profile.getName());
+            } else {
+                return soup.getTribes();
+            }
         } catch (IOException dropIt) {}
 
         return null;

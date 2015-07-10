@@ -6,4 +6,6 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_login">Login</string>
+
+    <string name="address">http://snapzu.com</string>
 </resources>

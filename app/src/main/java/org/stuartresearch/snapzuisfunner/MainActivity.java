@@ -2,6 +2,7 @@ package org.stuartresearch.snapzuisfunner;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,6 +53,10 @@ import icepick.Icicle;
 public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerItemClickListener,
         AccountHeader.OnAccountHeaderListener, SwipeRefreshLayout.OnRefreshListener {
 
+    public static final String address = "http://snapzu.com/";
+    public static final String PREF_NAME = "preferences";
+    public static final String PREF_PROFILE_ID = "profile_id";
+
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.grid_view) StaggeredGridView gridView;
     @Bind(R.id.pull_to_refresh) SwipeRefreshLayout refresh;
@@ -84,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         Icepick.restoreInstanceState(this, savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        bus.register(this);
+
 
         setSupportActionBar(toolbar);
 
@@ -112,18 +119,23 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
         // Build account header_back
         accountHeader = generateAccounterHeader();
-       drawer = generateDrawer();
+        drawer = generateDrawer();
 
         //Make hamburger appear and function
         drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
 
 
+        //get profile
+        if (profile == null) {
+            profile = getSavedProfile();
+        }
 
         // Fill tribes list
-        if (tribes == null)
-            downloadTribes();
-        else
+        if (tribes != null) {
             showTribes(tribes);
+        }
+        downloadTribes();
+
 
         //Gridview business
         mAdapter = new GridAdapter(this, R.layout.grid_item, posts);
@@ -134,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
         if (savedInstanceState == null) {
             // Receive updates from other components
-            bus.register(this);
 
             // bug 77712
             refresh.post(new Runnable() {
@@ -145,17 +156,12 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             });
 
             // Fill posts
-            downloadPosts();
         } else {
             // or else will not loading on orientation change
             endlessScrollListener = new EndlessScrollListener();
             gridView.setOnScrollListener(endlessScrollListener);
 
         }
-
-
-        //TODO REMOVE FROM PRODUCTION
-        Profile.deleteAll(Profile.class);
 
     }
 
@@ -190,6 +196,12 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Icepick.saveInstanceState(this, outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Icepick.restoreInstanceState(this, savedInstanceState);
     }
 
     @Override
@@ -232,6 +244,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             // Settings
             case -1:
                 Toast.makeText(this, "Settings is not implemented", Toast.LENGTH_SHORT).show();
+                Profile.deleteAll(Profile.class);
                 break;
             // Tribe Selected
             default:
@@ -246,22 +259,29 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     // ACCOUNT SELECTED
     @Override
     public boolean onProfileChanged(View view, IProfile iProfile, boolean b) {
-        //sample usage of the onProfileChanged listener
-        //if the clicked item has the identifier 1 add a new profile ;)
-        if (iProfile instanceof IDrawerItem) {
-            if (iProfile.getIdentifier() == -1) {
+        switch (iProfile.getIdentifier()) {
+            case -1:
+                // ADD ACCOUNT
                 Intent i = new Intent(this, Login.class);
                 startActivity(i);
-            } else if (iProfile.getIdentifier() == -2) {
+                break;
+            case -2:
+                // MANAGE ACCOUNTS
                 Toast.makeText(this, "Manage Accounts is not implemented", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            profile = profiles.get(iProfile.getIdentifier());
-            Toast.makeText(this, String.format("Logged in as %s", profile.getName()), Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                // ACCOUNT SELECTED
+                profile = profiles.get(iProfile.getIdentifier());
+                Toast.makeText(this, String.format("Logged in as %s", profile.getName()), Toast.LENGTH_SHORT).show();
+                downloadTribes();
+                break;
         }
 
+
+        drawer.closeDrawer();
+
         //false if you have not consumed the event and it should close the drawer
-        return true;
+        return false;
     }
 
 
@@ -288,7 +308,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     }
 
     private void downloadTribes() {
-        new PopulateTribes(drawer).execute();
+        drawer.removeAllItems();
+        new PopulateTribes(profile).execute();
     }
 
     private void tribeSelected(Tribe tribe) {
@@ -352,9 +373,16 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     public void showTribes(Tribe[] tribes) {
         this.tribes = tribes;
 
-        for (int i = 5; i < drawer.getDrawerItems().size(); i++) {
-            drawer.removeItem(i);
-        }
+
+
+        drawer.removeAllItems();
+
+        drawer.addItems(
+                new PrimaryDrawerItem().withName("Profile").withIcon(R.drawable.ic_account_box_black_18dp).withCheckable(false),
+                new PrimaryDrawerItem().withName("Messages").withIcon(R.drawable.ic_message_black_18dp).withCheckable(false),
+                new PrimaryDrawerItem().withName("Open User").withIcon(R.drawable.ic_group_black_18dp).withCheckable(false),
+                new PrimaryDrawerItem().withName("Open Tribe").withIcon(R.drawable.ic_filter_tilt_shift_black_18dp).withCheckable(false),
+                new DividerDrawerItem());
 
         for (int i = 0; i < tribes.length; i++) {
             drawer.addItem(new SecondaryDrawerItem().withName(this.tribes[i].getName()));
@@ -487,8 +515,24 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
     @Subscribe
     public void onPicturedAdded(AddPictureToProfile.ProfilePicturePackage profilePicturePackage) {
-        profilePicturePackage.profile.save();
-        accountHeader.addProfile(profilePicturePackage.profile.toProfileDrawerItem(), accountHeader.getProfiles().size() - 2);
+        profile = profilePicturePackage.profile;
+        profile.save();
+        saveProfile();
+        accountHeader.addProfile(profile.toProfileDrawerItem(), accountHeader.getProfiles().size() - 2);
+        downloadTribes();
+    }
+
+    public void saveProfile() {
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putLong(PREF_PROFILE_ID, profile.getId());
+        editor.commit();
+    }
+
+    public Profile getSavedProfile() {
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        return Profile.findById(Profile.class, sharedPreferences.getLong(PREF_PROFILE_ID, -1));
     }
 
 }
