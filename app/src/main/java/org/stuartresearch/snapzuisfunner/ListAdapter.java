@@ -82,7 +82,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         String date = object.getDate();
         String paragraph = object.getParagraph();
         String color = "#D32F2F";
-        int indent = object.getIndent() * 4;
+        int indent = object.getIndent() * 6;
 
 
 
