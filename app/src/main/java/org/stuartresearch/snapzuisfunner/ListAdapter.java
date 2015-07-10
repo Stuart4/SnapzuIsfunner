@@ -54,7 +54,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        if (Float.parseFloat(vote) > 0) {
+        if (!vote.isEmpty() && Float.parseFloat(vote) > 0) {
             color = "#1976D2";
         }
 
