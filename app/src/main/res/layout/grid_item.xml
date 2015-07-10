@@ -41,8 +41,7 @@
         android:elegantTextHeight="false"
         android:autoText="false"
         android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="20dp"/>
+        android:paddingRight="20dp"/>
 
     <TextView
         android:layout_width="match_parent"
