@@ -136,10 +136,16 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         }
         downloadTribes();
 
+        // fill grid with posts
+        if (posts.isEmpty()) {
+            downloadPosts();
+        }
 
         //Gridview business
         mAdapter = new GridAdapter(this, R.layout.grid_item, posts);
         gridView.setAdapter(mAdapter);
+
+
 
 
         refresh.setEnabled(false);

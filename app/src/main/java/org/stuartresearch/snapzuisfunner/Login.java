@@ -37,8 +37,6 @@ public class Login extends ActionBarActivity {
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
-        settings.setBuiltInZoomControls(true);
-        settings.setDisplayZoomControls(false);
         webView.setWebViewClient(new LoginWebClient());
 
         CookieManager cookieManager = CookieManager.getInstance();
