@@ -79,8 +79,18 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     @Icicle int drawerSelection = 5;
     @Icicle Profile profile;
 
-
     EndlessScrollListener endlessScrollListener;
+
+    PrimaryDrawerItem drawerProfile;
+    PrimaryDrawerItem drawerMessages;
+    PrimaryDrawerItem drawerOpenUser;
+    PrimaryDrawerItem drawerOpenTribe;
+    DividerDrawerItem drawerDivider;
+    PrimaryDrawerItem drawerSettings;
+
+
+    ProfileSettingDrawerItem profileSettingsAdd;
+    ProfileSettingDrawerItem profileSettingsManage;
 
 
     @Override
@@ -117,9 +127,11 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             }
         });
 
+        buildDrawerItems();
+
         // Build account header_back
-        accountHeader = generateAccounterHeader();
-        drawer = generateDrawer();
+        accountHeader = generateAccounterHeader(savedInstanceState);
+        drawer = generateDrawer(savedInstanceState);
 
         //Make hamburger appear and function
         drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
@@ -202,6 +214,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Icepick.saveInstanceState(this, outState);
+        outState = accountHeader.saveInstanceState(outState);
+        outState = drawer.saveInstanceState(outState);
     }
 
     @Override
@@ -224,6 +238,20 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         } else {
             super.onBackPressed();
         }
+    }
+
+    public void buildDrawerItems() {
+        drawerProfile = new PrimaryDrawerItem().withName("Profile").withIcon(R.drawable.ic_account_box_black_18dp).withCheckable(false);
+        drawerMessages =new PrimaryDrawerItem().withName("Messages").withIcon(R.drawable.ic_message_black_18dp).withCheckable(false);
+        drawerOpenUser =new PrimaryDrawerItem().withName("Open User").withIcon(R.drawable.ic_group_black_18dp).withCheckable(false);
+        drawerOpenTribe =new PrimaryDrawerItem().withName("Open Tribe").withIcon(R.drawable.ic_filter_tilt_shift_black_18dp).withCheckable(false);
+        drawerDivider = new DividerDrawerItem();
+        drawerSettings = new PrimaryDrawerItem().withName("Settings").withIcon(R.drawable.ic_settings_black_18dp).withCheckable(false);
+
+
+        profileSettingsAdd = new ProfileSettingDrawerItem().withName("Add Account").withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add).actionBarSize().paddingDp(5).colorRes(R.color.material_drawer_primary_text)).withIdentifier(-1);
+        profileSettingsManage = new ProfileSettingDrawerItem().withName("Manage Accounts").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(-2);
+
     }
 
     // DRAWER CLICKED
@@ -272,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 break;
             case -2:
                 // MANAGE ACCOUNTS
-                Toast.makeText(this, "Manage Accounts is not implemented", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Account Management is not implemented", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 // ACCOUNT SELECTED
@@ -283,10 +311,10 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         }
 
 
-        drawer.closeDrawer();
+        //drawer.closeDrawer();
 
         //false if you have not consumed the event and it should close the drawer
-        return false;
+        return true;
     }
 
 
@@ -313,7 +341,6 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     }
 
     private void downloadTribes() {
-        drawer.removeAllItems();
         new PopulateTribes(profile).execute();
     }
 
@@ -376,22 +403,21 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     }
 
     public void showTribes(Tribe[] tribes) {
+
+        for (int i = 5; i < drawer.getDrawerItems().size(); i++) {
+            drawer.removeItem(i);
+        }
+
+
         this.tribes = tribes;
 
-
-
-        drawer.removeAllItems();
-
-        drawer.addItems(
-                new PrimaryDrawerItem().withName("Profile").withIcon(R.drawable.ic_account_box_black_18dp).withCheckable(false),
-                new PrimaryDrawerItem().withName("Messages").withIcon(R.drawable.ic_message_black_18dp).withCheckable(false),
-                new PrimaryDrawerItem().withName("Open User").withIcon(R.drawable.ic_group_black_18dp).withCheckable(false),
-                new PrimaryDrawerItem().withName("Open Tribe").withIcon(R.drawable.ic_filter_tilt_shift_black_18dp).withCheckable(false),
-                new DividerDrawerItem());
 
         for (int i = 0; i < tribes.length; i++) {
             drawer.addItem(new SecondaryDrawerItem().withName(this.tribes[i].getName()));
         }
+
+        drawer.getAdapter().notifyDataSetChanged();
+
     }
 
     // SENT FROM PopulateTribes
@@ -462,12 +488,13 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         }
     }
 
-    public AccountHeader generateAccounterHeader() {
+    public AccountHeader generateAccounterHeader(Bundle savedInstanceState) {
         AccountHeaderBuilder headerBuilder = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)
                 .withSelectionListEnabled(true)
                 .withSelectionListEnabledForSingleProfile(true)
+                .withSavedInstance(savedInstanceState)
                 .withOnAccountHeaderListener(this);
 
         try {
@@ -480,31 +507,23 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             headerBuilder.addProfiles(profiles.get(i).toProfileDrawerItem().withIdentifier(i));
         }
 
-        headerBuilder.addProfiles(
-                new ProfileSettingDrawerItem().withName("Add Account").withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add).actionBarSize().paddingDp(5).colorRes(R.color.material_drawer_primary_text)).withIdentifier(-1),
-                new ProfileSettingDrawerItem().withName("Manage Accounts").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(-2)
-        );
+        headerBuilder.addProfiles(profileSettingsAdd, profileSettingsManage);
 
 
         return headerBuilder.build();
     }
 
-    public Drawer generateDrawer() {
+    public Drawer generateDrawer(Bundle savedInstanceState) {
         return new DrawerBuilder().withActivity(this).withTranslucentStatusBar(false)
                 .withActionBarDrawerToggle(true)
                 .withToolbar(toolbar)
                 .withAccountHeader(accountHeader)
                 .withSelectedItem(drawerSelection)
-                .addDrawerItems(
-                        new PrimaryDrawerItem().withName("Profile").withIcon(R.drawable.ic_account_box_black_18dp).withCheckable(false),
-                        new PrimaryDrawerItem().withName("Messages").withIcon(R.drawable.ic_message_black_18dp).withCheckable(false),
-                        new PrimaryDrawerItem().withName("Open User").withIcon(R.drawable.ic_group_black_18dp).withCheckable(false),
-                        new PrimaryDrawerItem().withName("Open Tribe").withIcon(R.drawable.ic_filter_tilt_shift_black_18dp).withCheckable(false),
-                        new DividerDrawerItem()
-                )
+                .addDrawerItems(drawerProfile, drawerMessages, drawerOpenUser, drawerOpenTribe, drawerDivider)
                 .addStickyDrawerItems(
                         new PrimaryDrawerItem().withName("Settings").withIcon(R.drawable.ic_settings_black_18dp).withCheckable(false)
                 ).withOnDrawerItemClickListener(this)
+                .withSavedInstance(savedInstanceState)
                 .build();
     }
 
