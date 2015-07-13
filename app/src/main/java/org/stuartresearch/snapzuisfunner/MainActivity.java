@@ -37,6 +37,7 @@ import com.squareup.otto.Subscribe;
 import com.squareup.otto.ThreadEnforcer;
 import com.squareup.picasso.Picasso;
 
+import org.parceler.Parcels;
 import org.stuartresearch.SnapzuAPI.Post;
 import org.stuartresearch.SnapzuAPI.Tribe;
 
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     public static final String address = "http://snapzu.com/";
     public static final String PREF_NAME = "preferences";
     public static final String PREF_PROFILE_ID = "profile_id";
+
+    public static final int LOGIN_REQUEST = 1;
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.grid_view) StaggeredGridView gridView;
@@ -101,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         ButterKnife.bind(this);
         bus.register(this);
 
+        Profile.deleteAll(Profile.class);
 
         setSupportActionBar(toolbar);
 
@@ -203,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             return true;
         } else if (id == R.id.action_compose) {
             Toast.makeText(this, "Compose not implemented.", Toast.LENGTH_SHORT).show();
+            clearTribes();
             return true;
         }
 
@@ -237,6 +242,17 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             drawer.closeDrawer();
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == LOGIN_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                this.profile = Parcels.unwrap(data.getParcelableExtra("profile"));
+                addProfile(profile);
+            }
         }
     }
 
@@ -296,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             case -1:
                 // ADD ACCOUNT
                 Intent i = new Intent(this, Login.class);
-                startActivity(i);
+                startActivityForResult(i, 1);
                 break;
             case -2:
                 // MANAGE ACCOUNTS
@@ -343,6 +359,12 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
     private void downloadTribes() {
         new PopulateTribes(profile).execute();
+    }
+
+    private void clearTribes() {
+        //accountHeader.toggleSelectionList(this);
+        drawer.removeAllItems();
+        drawer.addItems(drawerProfile, drawerMessages, drawerOpenUser, drawerOpenTribe, drawerDivider);
     }
 
     private void tribeSelected(Tribe tribe) {
@@ -528,26 +550,18 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 .build();
     }
 
-    @Subscribe
-    public void onProfile(AddPictureToProfile.ProfilePicturePackage profilePicturePackage) {
-    }
-
-    @Subscribe
-    public void onProfileError(AddPictureToProfile.ProfilePictureError profilePictureError) {
-
-    }
 
 
-    @Subscribe
-    public void onPicturedAdded(AddPictureToProfile.ProfilePicturePackage profilePicturePackage) {
-        profile = profilePicturePackage.profile;
+    public void addProfile(Profile profile) {
+        this.profile = profile;
         profile.save();
-        saveProfile();
+        saveProfileToPreferences();
         accountHeader.addProfile(profile.toProfileDrawerItem(), accountHeader.getProfiles().size() - 2);
+        clearTribes();
         downloadTribes();
     }
 
-    public void saveProfile() {
+    public void saveProfileToPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 

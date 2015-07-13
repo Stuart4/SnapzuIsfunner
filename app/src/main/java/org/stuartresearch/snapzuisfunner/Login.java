@@ -1,5 +1,6 @@
 package org.stuartresearch.snapzuisfunner;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -12,6 +13,8 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
+
+import org.parceler.Parcels;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -111,7 +114,11 @@ public class Login extends ActionBarActivity {
                 String username = matcher.group(2);
                 Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
                 Profile profile = new Profile(username, cookies);
-                new AddPictureToProfile(profile).execute();
+                Intent result = new Intent();
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("profile", Parcels.wrap(profile));
+                result.putExtras(bundle);
+                setResult(RESULT_OK, result);
                 finish();
             }
         } else {
@@ -120,10 +127,4 @@ public class Login extends ActionBarActivity {
         }
     }
 
-    public class LoginPackage {
-        public String cookies;
-        public LoginPackage(String cookies) {
-            this.cookies = cookies;
-        }
-    }
 }
