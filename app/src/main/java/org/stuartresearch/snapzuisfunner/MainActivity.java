@@ -91,9 +91,10 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     DividerDrawerItem drawerDivider;
     PrimaryDrawerItem drawerSettings;
 
-
     ProfileSettingDrawerItem profileSettingsAdd;
     ProfileSettingDrawerItem profileSettingsManage;
+
+    IProfile iProfile;
 
 
     @Override
@@ -250,8 +251,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         if (requestCode == LOGIN_REQUEST) {
             if (resultCode == RESULT_OK) {
                 this.profile = Parcels.unwrap(data.getParcelableExtra("profile"));
-                addProfile(profile);
-                clearTribes();
+                downloadProfilePicture(profile);
             }
         }
     }
@@ -320,6 +320,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 break;
             default:
                 // ACCOUNT SELECTED
+                this.iProfile = iProfile;
                 profile = profiles.get(iProfile.getIdentifier());
                 Toast.makeText(this, String.format("Logged in as %s", profile.getName()), Toast.LENGTH_SHORT).show();
                 downloadTribes();
@@ -424,6 +425,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     // SENT FROM PopulateTribes
     @Subscribe
     public void onTribesReady(PopulateTribes.TribesPackage tribesPackage) {
+        clearTribes();
         showTribes(tribesPackage.tribes);
     }
 
@@ -558,9 +560,14 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         this.profile = profile;
         profile.save();
         saveProfileToPreferences();
-        accountHeader.addProfile(profile.toProfileDrawerItem(), accountHeader.getProfiles().size() - 2);
+        iProfile = profile.toProfileDrawerItem();
+        accountHeader.addProfile(iProfile, accountHeader.getProfiles().size() - 2);
         clearTribes();
         downloadTribes();
+    }
+
+    public void downloadProfilePicture(Profile profile) {
+        new AddPictureToProfile(profile).execute();
     }
 
     public void saveProfileToPreferences() {
@@ -574,6 +581,16 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     public Profile getSavedProfile() {
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         return Profile.findById(Profile.class, sharedPreferences.getLong(PREF_PROFILE_ID, -1));
+    }
+
+    @Subscribe
+    public void onProfilePicture(AddPictureToProfile.ProfilePicturePackage profilePicturePackage) {
+        addProfile(profilePicturePackage.profile);
+    }
+
+    @Subscribe
+    public void onProfilePictureError(AddPictureToProfile.ProfilePictureError profilePictureError) {
+        Toast.makeText(this, "Profile picture errors not implemented", Toast.LENGTH_SHORT).show();
     }
 
 }
