@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
     ProfileSettingDrawerItem profileSettingsAdd;
     ProfileSettingDrawerItem profileSettingsManage;
+    ProfileSettingDrawerItem profileSettingsLoggedOut;
 
     IProfile iProfile;
 
@@ -104,8 +105,6 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         bus.register(this);
-
-        Profile.deleteAll(Profile.class);
 
         setSupportActionBar(toolbar);
 
@@ -132,20 +131,19 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             }
         });
 
-        buildDrawerItems();
-
-        // Build account header_back
-        accountHeader = generateAccounterHeader(savedInstanceState);
-        drawer = generateDrawer(savedInstanceState);
-
-        //Make hamburger appear and function
-        drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
-
-
         //get profile
         if (profile == null) {
             profile = getSavedProfile();
         }
+
+        buildDrawerItems();
+
+        // Build account header_back
+        accountHeader = generateAccounterHeader(savedInstanceState, profile == null ? -1 : profile.getId().intValue());
+        drawer = generateDrawer(savedInstanceState);
+
+        //Make hamburger appear and function
+        drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
 
         // Fill tribes list
         if (tribes != null) {
@@ -264,8 +262,9 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         drawerSettings = new PrimaryDrawerItem().withName("Settings").withIcon(R.drawable.ic_settings_black_18dp).withCheckable(false);
 
 
-        profileSettingsAdd = new ProfileSettingDrawerItem().withName("Add Account").withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add).actionBarSize().paddingDp(5).colorRes(R.color.material_drawer_primary_text)).withIdentifier(-1);
-        profileSettingsManage = new ProfileSettingDrawerItem().withName("Manage Accounts").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(-2);
+        profileSettingsAdd = new ProfileSettingDrawerItem().withName("Add Account").withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add).actionBarSize().paddingDp(5).colorRes(R.color.material_drawer_primary_text)).withIdentifier(-2);
+        profileSettingsManage = new ProfileSettingDrawerItem().withName("Manage Accounts").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(-3);
+        profileSettingsLoggedOut = new ProfileSettingDrawerItem().withName("Logged Out").withIdentifier(-1);
 
     }
 
@@ -306,21 +305,33 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
     // ACCOUNT SELECTED
     @Override
-    public boolean onProfileChanged(View view, IProfile iProfile, boolean b) {
+    public boolean onProfileChanged(View view, IProfile iProfile, boolean currentProfile) {
+        if(currentProfile) {
+            return false;
+        }
+
         switch (iProfile.getIdentifier()) {
             case -1:
+                //LOGGED OUT
+                this.profile = null;
+                Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show();
+                accountHeader.setActiveProfile(-1);
+                clearTribes();
+                downloadTribes();
+                break;
+            case -2:
                 // ADD ACCOUNT
                 Intent i = new Intent(this, Login.class);
                 startActivityForResult(i, 1);
                 break;
-            case -2:
+            case -3:
                 // MANAGE ACCOUNTS
                 Toast.makeText(this, "Account Management is not implemented", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 // ACCOUNT SELECTED
                 this.iProfile = iProfile;
-                profile = profiles.get(iProfile.getIdentifier());
+                this.profile = profiles.get(iProfile.getIdentifier());
                 Toast.makeText(this, String.format("Logged in as %s", profile.getName()), Toast.LENGTH_SHORT).show();
                 clearTribes();
                 downloadTribes();
@@ -515,7 +526,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         }
     }
 
-    public AccountHeader generateAccounterHeader(Bundle savedInstanceState) {
+    public AccountHeader generateAccounterHeader(Bundle savedInstanceState, int selectedID) {
         AccountHeaderBuilder headerBuilder = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header)
@@ -524,20 +535,31 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 .withSavedInstance(savedInstanceState)
                 .withOnAccountHeaderListener(this);
 
+        headerBuilder.addProfiles(profileSettingsLoggedOut);
+
         try {
             profiles = Profile.listAll(Profile.class);
         } catch (Exception e) {
             profiles = new ArrayList<>(0);
         }
 
+        int identifier = -1;
+
         for (int i = 0; i < profiles.size(); i++) {
-            headerBuilder.addProfiles(profiles.get(i).toProfileDrawerItem(i).withIdentifier(i));
+            Profile cursor = profiles.get(i);
+            if (selectedID == cursor.getId()) {
+                identifier = i;
+            }
+            headerBuilder.addProfiles(cursor.toProfileDrawerItem(i).withIdentifier(i));
         }
 
         headerBuilder.addProfiles(profileSettingsAdd, profileSettingsManage);
 
+        AccountHeader accountHeader = headerBuilder.build();
 
-        return headerBuilder.build();
+        accountHeader.setActiveProfile(identifier);
+
+        return accountHeader;
     }
 
     public Drawer generateDrawer(Bundle savedInstanceState) {
@@ -565,6 +587,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         saveProfileToPreferences();
         iProfile = profile.toProfileDrawerItem(pos);
         accountHeader.addProfile(iProfile, accountHeader.getProfiles().size() - 2);
+        clearTribes();
+        downloadTribes();
     }
 
     public void removeProfile(Profile profile) {
