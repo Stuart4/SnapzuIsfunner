@@ -207,7 +207,6 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             return true;
         } else if (id == R.id.action_compose) {
             Toast.makeText(this, "Compose not implemented.", Toast.LENGTH_SHORT).show();
-            clearTribes();
             return true;
         }
 
@@ -252,6 +251,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             if (resultCode == RESULT_OK) {
                 this.profile = Parcels.unwrap(data.getParcelableExtra("profile"));
                 addProfile(profile);
+                clearTribes();
             }
         }
     }
