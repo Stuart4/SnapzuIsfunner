@@ -250,8 +250,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == LOGIN_REQUEST) {
             if (resultCode == RESULT_OK) {
-                this.profile = Parcels.unwrap(data.getParcelableExtra("profile"));
-                downloadProfilePicture(profile);
+                addProfile((Profile) Parcels.unwrap(data.getParcelableExtra("profile")));
             }
         }
     }
@@ -531,7 +530,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         }
 
         for (int i = 0; i < profiles.size(); i++) {
-            headerBuilder.addProfiles(profiles.get(i).toProfileDrawerItem().withIdentifier(i));
+            headerBuilder.addProfiles(profiles.get(i).toProfileDrawerItem(i).withIdentifier(i));
         }
 
         headerBuilder.addProfiles(profileSettingsAdd, profileSettingsManage);
@@ -557,17 +556,26 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
 
     public void addProfile(Profile profile) {
+        removeProfile(profile);
         this.profile = profile;
+        int pos = profiles.size();
+        profiles.add(profile);
         profile.save();
         saveProfileToPreferences();
-        iProfile = profile.toProfileDrawerItem();
+        iProfile = profile.toProfileDrawerItem(pos);
         accountHeader.addProfile(iProfile, accountHeader.getProfiles().size() - 2);
         clearTribes();
         downloadTribes();
     }
 
-    public void downloadProfilePicture(Profile profile) {
-        new AddPictureToProfile(profile).execute();
+    public void removeProfile(Profile profile) {
+        for (int i = 0; i < profiles.size(); i++) {
+            Profile pos = profiles.get(i);
+            if (profile.equals(pos)) {
+                pos.delete();
+                profiles.remove(i);
+            }
+        }
     }
 
     public void saveProfileToPreferences() {

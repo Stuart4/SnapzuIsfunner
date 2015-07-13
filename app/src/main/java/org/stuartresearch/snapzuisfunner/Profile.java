@@ -19,9 +19,10 @@ public class Profile extends SugarRecord<Profile> implements Serializable {
     public Profile() {
     }
 
-    public Profile(String name, String cookies) {
+    public Profile(String name, String cookies, String imageUrl) {
         this.name = name;
         this.cookies = cookies;
+        this.imageUrl = imageUrl;
     }
 
     public String getName() {
@@ -48,7 +49,17 @@ public class Profile extends SugarRecord<Profile> implements Serializable {
         this.cookies = cookies;
     }
 
-    public ProfileDrawerItem toProfileDrawerItem() {
+    @Override
+    public boolean equals(Object o) {
+        return name.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    public ProfileDrawerItem toProfileDrawerItem(int id) {
         ProfileDrawerItem item = new ProfileDrawerItem();
         if (name != null) {
             item = item.withName(name);
@@ -56,6 +67,8 @@ public class Profile extends SugarRecord<Profile> implements Serializable {
         if (imageUrl != null) {
             item = item.withIcon(imageUrl);
         }
+
+        item.setIdentifier(id);
 
         return item;
     }

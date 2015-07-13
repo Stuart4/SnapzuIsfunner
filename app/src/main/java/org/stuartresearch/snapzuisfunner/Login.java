@@ -12,9 +12,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-import com.squareup.otto.Subscribe;
-
 import org.parceler.Parcels;
+import org.stuartresearch.SnapzuAPI.Soup;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -82,49 +81,59 @@ public class Login extends ActionBarActivity {
         MainActivity.bus.unregister(this);
     }
 
-    @Subscribe
-    public void onLogin(LoginWebClient.LoginFinished finished) {
-        finish();
-    }
 
     private static class LoginWebClient extends WebViewClient {
 
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-
             if (!url.equals(LOGIN_URL)) {
-                view.loadUrl("javascript:window.SnapzuLogin.showCookies (document.cookie);");
-            } else {
-                view.loadUrl(url);
+                view.setEnabled(false);
             }
+            view.loadUrl(url);
             return true;
         }
-        public class LoginFinished {}
+
+        @Override
+        public void onPageFinished(WebView view, String url){
+                super.onPageFinished(view, url);
+            if (!url.equals(LOGIN_URL)) {
+                view.loadUrl("javascript:window.SnapzuLogin.getData (document.cookie, document.documentElement.innerHTML);");
+            }
+        }
+
 
     }
 
     @JavascriptInterface
-    public void showCookies(String cookies) {
-        makeProfile(cookies);
+    public void getData(String cookies, String html) {
+        makeProfile(cookies, html);
     }
 
-    public void makeProfile(String cookies) {
+
+    public void makeProfile(String cookies, String html) {
         if (cookies.split(";").length == 7) {
             Matcher matcher = findProfile.matcher(cookies);
             if (matcher.find()) {
                 String username = matcher.group(2);
                 Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
-                Profile profile = new Profile(username, cookies);
-                Intent result = new Intent();
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("profile", Parcels.wrap(profile));
-                result.putExtras(bundle);
-                setResult(RESULT_OK, result);
-                finish();
+
+                try {
+                    Soup soup = new Soup();
+                    String imageUrl = soup.extractPicture(html);
+
+                    Profile profile = new Profile(username, cookies, imageUrl);
+                    Intent result = new Intent();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("profile", Parcels.wrap(profile));
+                    result.putExtras(bundle);
+                    setResult(RESULT_OK, result);
+                    finish();
+                    return;
+                } catch (Exception dropIt) {}
             }
-        } else {
+        }
+
             Toast.makeText(this, "Login failed. Did you select remember me?", Toast.LENGTH_LONG).show();
             finish();
-        }
     }
 
 }
