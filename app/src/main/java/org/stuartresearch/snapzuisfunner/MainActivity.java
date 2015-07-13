@@ -322,6 +322,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 this.iProfile = iProfile;
                 profile = profiles.get(iProfile.getIdentifier());
                 Toast.makeText(this, String.format("Logged in as %s", profile.getName()), Toast.LENGTH_SHORT).show();
+                clearTribes();
                 downloadTribes();
                 break;
         }
@@ -564,8 +565,6 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         saveProfileToPreferences();
         iProfile = profile.toProfileDrawerItem(pos);
         accountHeader.addProfile(iProfile, accountHeader.getProfiles().size() - 2);
-        clearTribes();
-        downloadTribes();
     }
 
     public void removeProfile(Profile profile) {
