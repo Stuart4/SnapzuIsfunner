@@ -330,7 +330,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         //drawer.closeDrawer();
 
         //false if you have not consumed the event and it should close the drawer
-        return true;
+        return false;
     }
 
 
@@ -362,7 +362,9 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     }
 
     private void clearTribes() {
-        //accountHeader.toggleSelectionList(this);
+        if (accountHeader.isSelectionListShown())
+            accountHeader.toggleSelectionList(this);
+
         drawer.removeAllItems();
         drawer.addItems(drawerProfile, drawerMessages, drawerOpenUser, drawerOpenTribe, drawerDivider);
     }
