@@ -26,6 +26,7 @@ import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
     ProfileSettingDrawerItem profileSettingsAdd;
     ProfileSettingDrawerItem profileSettingsManage;
-    ProfileSettingDrawerItem profileSettingsLoggedOut;
+    ProfileDrawerItem profileLoggedOut;
 
     IProfile iProfile;
 
@@ -264,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
         profileSettingsAdd = new ProfileSettingDrawerItem().withName("Add Account").withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add).actionBarSize().paddingDp(5).colorRes(R.color.material_drawer_primary_text)).withIdentifier(-2);
         profileSettingsManage = new ProfileSettingDrawerItem().withName("Manage Accounts").withIcon(GoogleMaterial.Icon.gmd_settings).withIdentifier(-3);
-        profileSettingsLoggedOut = new ProfileSettingDrawerItem().withName("Logged Out").withIdentifier(-1);
+        profileLoggedOut = new ProfileDrawerItem().withName("Logged Out").withIdentifier(-1);
 
     }
 
@@ -314,8 +315,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             case -1:
                 //LOGGED OUT
                 this.profile = null;
+                this.iProfile = null;
                 Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show();
-                accountHeader.setActiveProfile(-1);
                 clearTribes();
                 downloadTribes();
                 break;
@@ -326,7 +327,17 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 break;
             case -3:
                 // MANAGE ACCOUNTS
-                Toast.makeText(this, "Account Management is not implemented", Toast.LENGTH_SHORT).show();
+                new MaterialDialog.Builder(this).title("Delete All Accounts")
+                        .content("All saved accounts will be deleted.")
+                        .positiveText("DELETE")
+                        .negativeText("CANCEL")
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                super.onPositive(dialog);
+                                MainActivity.bus.post(new MainActivity.DeleteProfiles());
+                            }
+                        }).show();
                 break;
             default:
                 // ACCOUNT SELECTED
@@ -535,12 +546,10 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 .withSavedInstance(savedInstanceState)
                 .withOnAccountHeaderListener(this);
 
-        headerBuilder.addProfiles(profileSettingsLoggedOut);
-
         try {
             profiles = Profile.listAll(Profile.class);
         } catch (Exception e) {
-            profiles = new ArrayList<>(0);
+            profiles = new ArrayList<>(5);
         }
 
         int identifier = -1;
@@ -553,7 +562,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             headerBuilder.addProfiles(cursor.toProfileDrawerItem(i).withIdentifier(i));
         }
 
-        headerBuilder.addProfiles(profileSettingsAdd, profileSettingsManage);
+        headerBuilder.addProfiles(profileLoggedOut, profileSettingsAdd, profileSettingsManage);
 
         AccountHeader accountHeader = headerBuilder.build();
 
@@ -586,9 +595,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         profile.save();
         saveProfileToPreferences();
         iProfile = profile.toProfileDrawerItem(pos);
-        accountHeader.addProfile(iProfile, accountHeader.getProfiles().size() - 2);
-        clearTribes();
-        downloadTribes();
+        accountHeader.addProfile(iProfile, 0);
     }
 
     public void removeProfile(Profile profile) {
@@ -622,6 +629,26 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     @Subscribe
     public void onProfilePictureError(AddPictureToProfile.ProfilePictureError profilePictureError) {
         Toast.makeText(this, "Profile picture errors not implemented", Toast.LENGTH_SHORT).show();
+    }
+
+    public class DeleteProfiles {}
+
+    @Subscribe
+    public void onDeleteProfiles(DeleteProfiles deleteProfiles) {
+        int numUserProfiles = accountHeader.getProfiles().size() - 3;
+        for (int i = 0; i < numUserProfiles; i++) {
+            accountHeader.removeProfile(0);
+        }
+
+        profiles = new ArrayList<>(5);
+
+        Profile.deleteAll(Profile.class);
+
+        accountHeader.setActiveProfile(-1);
+
+        if (accountHeader.isSelectionListShown()) {
+            accountHeader.toggleSelectionList(this);
+        }
     }
 
 }
