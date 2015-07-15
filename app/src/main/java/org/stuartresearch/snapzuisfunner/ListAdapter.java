@@ -31,7 +31,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
     }
 
     static class ViewHolder {
-        ImageView intent;
+        ImageView indent;
         ImageView postIndent;
         TextView title;
         TextView paragraph;
@@ -51,7 +51,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
 
         viewHolder.title = (TextView) convertView.findViewById(R.id.comment_title);
         viewHolder.paragraph = (TextView) convertView.findViewById(R.id.comment_paragraph);
-        viewHolder.intent = (ImageView) convertView.findViewById(R.id.comment_indent);
+        viewHolder.indent = (ImageView) convertView.findViewById(R.id.comment_indent);
         viewHolder.postIndent = (ImageView) convertView.findViewById(R.id.post_padding);
 
         if (position == 0) {
@@ -71,7 +71,9 @@ public class ListAdapter extends ArrayAdapter<Comment> {
                     title, color, vote, user, date)));
             viewHolder.paragraph.setText(paragraph);
 
-            viewHolder.postIndent.setVisibility(View.VISIBLE);
+            viewHolder.postIndent.setVisibility(View.GONE);
+            viewHolder.indent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0f, convertView.getResources().getDisplayMetrics()) + 0.5f);
+            viewHolder.indent.requestLayout();
 
             return convertView;
         }
@@ -95,8 +97,8 @@ public class ListAdapter extends ArrayAdapter<Comment> {
                 , color, vote, user, date)));
         viewHolder.paragraph.setText(paragraph);
         viewHolder.postIndent.setVisibility(View.GONE);
-        viewHolder.intent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) indent, convertView.getResources().getDisplayMetrics()) + 0.5f);
-        viewHolder.intent.requestLayout();
+        viewHolder.indent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) indent, convertView.getResources().getDisplayMetrics()) + 0.5f);
+        viewHolder.indent.requestLayout();
 
         return convertView;
     }
