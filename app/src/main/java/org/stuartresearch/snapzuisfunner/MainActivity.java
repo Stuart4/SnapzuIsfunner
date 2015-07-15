@@ -207,8 +207,15 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             showSortingDialog();
             return true;
         } else if (id == R.id.action_compose) {
-            Toast.makeText(this, "Compose not implemented.", Toast.LENGTH_SHORT).show();
-            return true;
+            if (profile == null) {
+                Toast.makeText(this, "You are logged out", Toast.LENGTH_SHORT).show();
+            } else {
+                Intent intent = new Intent(this, ActionActivity.class);
+                intent.putExtra("url", tribe.getLink());
+                intent.putExtra("cookies", profile.cookies);
+                startActivity(intent);
+                return true;
+            }
         }
 
         return super.onOptionsItemSelected(item);

@@ -54,6 +54,9 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
     boolean showingComments = false;
 
+    String url;
+    String cookies;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,14 +100,17 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
             slidingUpPanelLayout.setEnabled(false);
         }
 
+        cookies = intent.getStringExtra("cookies");
+        url = intent.getStringExtra("url");
+
         // Get the right cookies in there
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setAcceptCookie(true);
         cookieManager.removeAllCookie();
-        cookieManager.setCookie(MainActivity.address, intent.getStringExtra("cookies"));
+        cookieManager.setCookie(MainActivity.address, cookies);
 
         // Load website
-        mWebView.loadUrl(intent.getStringExtra("url"));
+        mWebView.loadUrl(url);
 
 
     }
@@ -171,16 +177,16 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     public void onCommentsItemSelected(int id) {
         switch (id) {
             case R.id.post_1:
-                Toast.makeText(this, "Up vote is not implemented.", Toast.LENGTH_SHORT).show();
+                openComments();
                 break;
             case R.id.post_2:
                 new PopulateComments(post.getCommentsLink()).execute();
                 break;
             case R.id.post_3:
-                Toast.makeText(this, "Down vote is not implemented.", Toast.LENGTH_SHORT).show();
+                openComments();
                 break;
             case R.id.post_4:
-                Toast.makeText(this, "Compose is not implemented.", Toast.LENGTH_SHORT).show();
+                openComments();
                 break;
             case R.id.post_5:
                 Toast.makeText(this, "Search is not implemented.", Toast.LENGTH_SHORT).show();
@@ -194,6 +200,16 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
             default:
                 break;
         }
+    }
+
+    public void openComments() {
+        if (post == null) {
+            return;
+        }
+        Intent intent = new Intent(this, ActionActivity.class);
+        intent.putExtra("url", post.getCommentsLink());
+        intent.putExtra("cookies", cookies);
+        startActivity(intent);
     }
 
     public void sharePage() {
