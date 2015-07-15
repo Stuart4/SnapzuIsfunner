@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -273,22 +274,59 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     @Override
     public boolean onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
 
+        Intent intent;
         switch(i) {
             // Profile
             case 0:
-                Toast.makeText(this, "Profile is not implemented", Toast.LENGTH_SHORT).show();
+                if (profile == null) {
+                    Toast.makeText(this, "You are logged out", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                intent = new Intent(this, ActionActivity.class);
+                intent.putExtra("url", address + profile.getName());
+                intent.putExtra("cookies", profile.cookies);
+                startActivity(intent);
                 break;
             // Messages
             case 1:
-                Toast.makeText(this, "Messages is not implemented", Toast.LENGTH_SHORT).show();
+                if (profile == null) {
+                    Toast.makeText(this, "You are logged out", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                intent = new Intent(this, ActionActivity.class);
+                intent.putExtra("url", address + profile.getName() + "/message");
+                intent.putExtra("cookies", profile.cookies);
+                startActivity(intent);
                 break;
             // Open User
             case 2:
-                Toast.makeText(this, "Open User is not implemented", Toast.LENGTH_SHORT).show();
+                new MaterialDialog.Builder(this)
+                        .title("Open User")
+                        .content("Enter user's name.")
+                        .inputType(InputType.TYPE_CLASS_TEXT)
+                        .positiveText("GO")
+                        .input("SubZeroJake", "", false, new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                                Intent intent = new Intent(getApplicationContext(), ActionActivity.class);
+                                intent.putExtra("url", address + profile.getName());
+                                startActivity(intent);
+                            }
+                        }).show();
                 break;
             // Open Tribe
             case 3:
-                Toast.makeText(this, "Open Tribe not implemented", Toast.LENGTH_SHORT).show();
+                new MaterialDialog.Builder(this)
+                        .title("Open Tribe")
+                        .content("Enter tribe's name.")
+                        .inputType(InputType.TYPE_CLASS_TEXT)
+                        .positiveText("GO")
+                        .input("android", "", false, new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                                tribeSelected(new Tribe(input.toString(), address + "/t/" + input));
+                            }
+                        }).show();
                 break;
             // Settings
             case -1:
@@ -589,12 +627,12 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
     public void addProfile(Profile profile) {
         removeProfile(profile);
-        this.profile = profile;
+        //this.profile = profile;
         int pos = profiles.size();
         profiles.add(profile);
         profile.save();
         saveProfileToPreferences();
-        iProfile = profile.toProfileDrawerItem(pos);
+        //iProfile = profile.toProfileDrawerItem(pos);
         accountHeader.addProfile(iProfile, 0);
     }
 

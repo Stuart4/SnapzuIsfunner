@@ -93,6 +93,10 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
         Intent intent = getIntent();
 
+        if (intent.getBooleanExtra("locked", false)) {
+            slidingUpPanelLayout.setEnabled(false);
+        }
+
         // Get the right cookies in there
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setAcceptCookie(true);
