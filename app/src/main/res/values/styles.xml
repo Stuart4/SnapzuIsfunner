@@ -16,11 +16,13 @@
         <item name="android:textColor">@color/primary_text</item>
         <item name="android:textColorSecondary">@color/secondary_text</item>
         <item name="android:listDivider">@drawable/default_layout_divider_dark</item>
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
     </style>
     <!-- ActionBar styles -->
     <style name="MyActionBar"
         parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/accent</item>
+        <item name="android:textColor">@color/primary_material_dark</item>
     </style>
 
 
