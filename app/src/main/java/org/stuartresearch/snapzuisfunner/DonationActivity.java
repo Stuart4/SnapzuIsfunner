@@ -7,6 +7,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
@@ -36,6 +37,7 @@ public class DonationActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Donations");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Sliding mechanism
         SlidrConfig config = new SlidrConfig.Builder().sensitivity(0.5f).build();
@@ -49,6 +51,13 @@ public class DonationActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(0, R.anim.slide_right);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        finish();
+        overridePendingTransition(0, R.anim.slide_right);
+        return true;
     }
 
     public static class DonationFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, BillingProcessor.IBillingHandler{

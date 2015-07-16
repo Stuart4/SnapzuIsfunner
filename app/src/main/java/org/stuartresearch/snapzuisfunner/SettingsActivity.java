@@ -6,6 +6,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
@@ -29,6 +30,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Settings");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Sliding mechanism
         SlidrConfig config = new SlidrConfig.Builder().sensitivity(0.5f).build();
@@ -41,6 +43,13 @@ public class SettingsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(0, R.anim.slide_right);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        finish();
+        overridePendingTransition(0, R.anim.slide_right);
+        return true;
     }
 
     public static class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener{
