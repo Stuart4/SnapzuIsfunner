@@ -337,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 break;
             // Settings
             case -1:
-                Toast.makeText(this, "Settings is not implemented", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
             // Tribe Selected
             default:

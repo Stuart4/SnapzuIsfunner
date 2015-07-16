@@ -9,4 +9,6 @@
 
     <string name="address">http://snapzu.com</string>
     <string name="title_activity_action">ActionActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_donation">DonationActivity</string>
 </resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+    <Preference
+        android:title="Donate"
+        android:summary="Show your support for Snapzu Is Funner"
+        android:key="setting_donate">
+        <intent android:action="android.intent.action.view"
+            android:targetPackage="org.stuartresearch.snapzuisfunner"
+            android:targetClass="org.stuartresearch.snapzuisfunner.DonationActivity"/>
+    </Preference>
+
+    <Preference
+        android:title="Rate The App"
+        android:summary="Help others discover Snapzu Is Funner"
+        android:key="setting_rate"
+        >
+        <intent android:action="android.intent.action.VIEW"
+            android:data="market://details?id=org.stuartresearch.radio91x" />
+    </Preference>
+
+    <Preference
+        android:title="Licenses"
+        android:summary="What makes Snapzu Is Funner possible"
+        android:key="setting_license" />
+</PreferenceScreen>

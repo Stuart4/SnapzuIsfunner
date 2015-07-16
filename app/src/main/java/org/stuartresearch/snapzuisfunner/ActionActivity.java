@@ -49,7 +49,7 @@ public class ActionActivity extends ActionBarActivity implements View.OnTouchLis
         getSupportActionBar().setTitle("");
 
         // Sliding mechanism
-        SlidrConfig config = new SlidrConfig.Builder().sensitivity(0.5f).velocityThreshold(12f).build();
+        SlidrConfig config = new SlidrConfig.Builder().sensitivity(0.5f).build();
         slidrInterface = Slidr.attach(this, config);
 
 

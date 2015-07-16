@@ -3,6 +3,7 @@
     package="org.stuartresearch.snapzuisfunner" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
         android:name="com.orm.SugarApp"
@@ -10,11 +11,18 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
-        <meta-data android:name="DATABASE" android:value="sugar.db" />
-        <meta-data android:name="VERSION" android:value="2" />
-        <meta-data android:name="QUERY_LOG" android:value="true" />
-        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="org.stuartresearch" />
+        <meta-data
+            android:name="DATABASE"
+            android:value="sugar.db" />
+        <meta-data
+            android:name="VERSION"
+            android:value="2" />
+        <meta-data
+            android:name="QUERY_LOG"
+            android:value="true" />
+        <meta-data
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="org.stuartresearch" />
 
         <activity
             android:name=".MainActivity"
@@ -41,10 +49,17 @@
         <activity
             android:name=".ActionActivity"
             android:label="@string/title_activity_action"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.stuartresearch.snapzuisfunner.MainActivity" />
+            android:theme="@style/Theme.Slidr.Slidable" >
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/Theme.Slidr.Slidable" >
+        </activity>
+        <activity
+            android:name=".DonationActivity"
+            android:label="@string/title_activity_donation"
+            android:theme="@style/Theme.Slidr.Slidable" >
         </activity>
     </application>
 
