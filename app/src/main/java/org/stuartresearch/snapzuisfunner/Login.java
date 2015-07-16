@@ -110,7 +110,7 @@ public class Login extends ActionBarActivity {
 
 
     public void makeProfile(String cookies, String html) {
-        if (cookies.split(";").length == 7) {
+        if (cookies.split(";").length >= 7) {
             Matcher matcher = findProfile.matcher(cookies);
             if (matcher.find()) {
                 String username = matcher.group(2);

@@ -408,7 +408,9 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         this.post = posts.get(position);
         Intent i = new Intent(this, PostActivity.class);
         i.putExtra("url", this.post.getLink());
-        i.putExtra("cookies", profile.cookies);
+        if (profile != null) {
+            i.putExtra("cookies", profile.cookies);
+        }
         startActivity(i);
     }
 
@@ -634,12 +636,12 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
     public void addProfile(Profile profile) {
         removeProfile(profile);
-        //this.profile = profile;
+        this.profile = profile;
         int pos = profiles.size();
         profiles.add(profile);
         profile.save();
         saveProfileToPreferences();
-        //iProfile = profile.toProfileDrawerItem(pos);
+        iProfile = profile.toProfileDrawerItem(pos);
         accountHeader.addProfile(iProfile, 0);
     }
 
@@ -659,6 +661,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
         editor.putLong(PREF_PROFILE_ID, profile.getId());
         editor.commit();
+
     }
 
     public Profile getSavedProfile() {

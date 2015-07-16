@@ -12,9 +12,15 @@
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+-keepclassmembers class fqcn.of.javascript.interface.for.webview {
+   public *;
+}
 
 -dontwarn com.squareup.okhttp.**
 -keep class com.github.mikephil.charting.** { *; }
+-dontwarn butterknife.Views$InjectViewProcessor
+-keep class my.package.DbModel { *; }
+-dontshrink
+-dontoptimize
+-keep public class org.stuartresearch.snapzuisfunner.xx.Profile extends SugarRecord{*;}
+-keep public class org.stuartresearch.snapzuisfunner.XX.Profile extends SugarApp{*;}
