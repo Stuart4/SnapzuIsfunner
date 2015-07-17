@@ -365,6 +365,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show();
                 clearTribes();
                 downloadTribes();
+                presentMessageCount("");
+                presentProfileLevel("");
                 break;
             case -2:
                 // ADD ACCOUNT
@@ -503,6 +505,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         refresh.setRefreshing(false);
         if (posts.length > 5) {
             endlessScrollListener = new EndlessScrollListener();
+
         }
         gridView.setOnScrollListener(endlessScrollListener);
     }
