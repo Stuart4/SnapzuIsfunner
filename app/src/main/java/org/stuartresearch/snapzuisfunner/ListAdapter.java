@@ -71,7 +71,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
                     title, color, vote, user, date)));
             viewHolder.paragraph.setText(paragraph);
 
-            viewHolder.postIndent.setVisibility(View.GONE);
+            viewHolder.postIndent.setVisibility(View.VISIBLE);
             viewHolder.indent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0f, convertView.getResources().getDisplayMetrics()) + 0.5f);
             viewHolder.indent.requestLayout();
 

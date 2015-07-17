@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         refresh.setOnRefreshListener(this);
 
         // Set titles
-        updateTitle();
+        presentTitle();
 
         // Load avatars with Picasso in header
         DrawerImageLoader.init(new DrawerImageLoader.IDrawerImageLoader() {
@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             showTribes(tribes);
         }
         downloadTribes();
+        downloadMessagesAndLevel();
 
         // fill grid with posts
         if (posts.isEmpty()) {
@@ -264,9 +265,9 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
     public void buildDrawerItems() {
         drawerProfile = new PrimaryDrawerItem().withName("Profile").withIcon(R.drawable.ic_account_box_black_18dp).withCheckable(false);
-        drawerMessages =new PrimaryDrawerItem().withName("Messages").withIcon(R.drawable.ic_message_black_18dp).withCheckable(false);
-        drawerOpenUser =new PrimaryDrawerItem().withName("Open User").withIcon(R.drawable.ic_group_black_18dp).withCheckable(false);
-        drawerOpenTribe =new PrimaryDrawerItem().withName("Open Tribe").withIcon(R.drawable.ic_filter_tilt_shift_black_18dp).withCheckable(false);
+        drawerMessages = new PrimaryDrawerItem().withName("Messages").withIcon(R.drawable.ic_message_black_18dp).withCheckable(false);
+        drawerOpenUser = new PrimaryDrawerItem().withName("Open User").withIcon(R.drawable.ic_group_black_18dp).withCheckable(false);
+        drawerOpenTribe = new PrimaryDrawerItem().withName("Open Tribe").withIcon(R.drawable.ic_filter_tilt_shift_black_18dp).withCheckable(false);
         drawerDivider = new DividerDrawerItem();
         drawerSettings = new PrimaryDrawerItem().withName("Settings").withIcon(R.drawable.ic_settings_black_18dp).withCheckable(false);
 
@@ -391,6 +392,9 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 Toast.makeText(this, String.format("Logged in as %s", profile.getName()), Toast.LENGTH_SHORT).show();
                 clearTribes();
                 downloadTribes();
+                downloadMessagesAndLevel();
+                presentMessageCount("");
+                presentProfileLevel("");
                 break;
         }
 
@@ -427,6 +431,15 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         }
     }
 
+    private void downloadMessagesAndLevel() {
+        if (profile != null) {
+            new PopulateMessagesAndLevel(profile.getCookies()).execute();
+        } else {
+            presentMessageCount("");
+            presentProfileLevel("");
+        }
+    }
+
     private void downloadTribes() {
         new PopulateTribes(profile).execute();
     }
@@ -448,7 +461,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         hideCards();
         downloadPosts();
 
-        updateTitle();
+        presentTitle();
     }
 
     public void hideCards() {
@@ -498,6 +511,17 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         showTribes(tribesPackage.tribes);
     }
 
+    @Subscribe
+    public void onMessagesAndLevelReady(PopulateMessagesAndLevel.MessagesAndLevelPackage messagesAndLevelPackage) {
+        presentProfileLevel(messagesAndLevelPackage.data[0]);
+        presentMessageCount(messagesAndLevelPackage.data[1]);
+    }
+
+    @Subscribe
+    public void onMessagesAndLevelError(PopulateMessagesAndLevel.MessagesAndLevelError messagesAndLevelError) {
+        Toast.makeText(this, "Network errors not implemented", Toast.LENGTH_SHORT).show();
+    }
+
     public void showTribes(Tribe[] tribes) {
 
         for (int i = 5; i < drawer.getDrawerItems().size(); i++) {
@@ -522,9 +546,21 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         Toast.makeText(this, "Network errors not implemented", Toast.LENGTH_SHORT).show();
     }
 
-    public void updateTitle() {
+    public void presentTitle() {
         getSupportActionBar().setTitle(tribe.getName().toUpperCase());
         getSupportActionBar().setSubtitle(this.sorting.substring(1));
+    }
+
+    public void presentMessageCount(String count) {
+        drawerMessages.setBadge(count);
+        drawer.removeItem(1);
+        drawer.addItem(drawerMessages, 1);
+    }
+
+    public void presentProfileLevel(String level) {
+        drawerProfile.setBadge(level);
+        drawer.removeItem(0);
+        drawer.addItem(drawerProfile, 0);
     }
 
     public static class SinglePostPackage {
@@ -556,7 +592,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                     } else if (i == 1) {
                         sorting = "/new";
                     }
-                    updateTitle();
+                    presentTitle();
                     refresh.setRefreshing(true);
                     endlessScrollListener.setLoading(true);
                     hideCards();
@@ -574,7 +610,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                     } else {
                         sorting = "/topscores";
                     }
-                    updateTitle();
+                    presentTitle();
                     refresh.setRefreshing(true);
                     endlessScrollListener.setLoading(true);
                     hideCards();
