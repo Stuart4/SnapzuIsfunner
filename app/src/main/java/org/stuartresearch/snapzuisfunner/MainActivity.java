@@ -658,6 +658,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         return new DrawerBuilder().withActivity(this).withTranslucentStatusBar(false)
                 .withActionBarDrawerToggle(true)
                 .withToolbar(toolbar)
+                .withTranslucentStatusBarProgrammatically(true)
                 .withAccountHeader(accountHeader)
                 .withSelectedItem(drawerSelection)
                 .addDrawerItems(drawerProfile, drawerMessages, drawerOpenUser, drawerOpenTribe, drawerDivider)
