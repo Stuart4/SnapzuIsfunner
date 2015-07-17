@@ -23,13 +23,22 @@ public class GridAdapter extends ArrayAdapter<Post> {
     private final LayoutInflater mLayoutInflater;
     private ArrayList<Post> objects;
     private int layoutResource;
-
+    private String tribe;
 
     public GridAdapter(Context context, int resource, ArrayList<Post> objects) {
         super(context, resource, objects);
         mLayoutInflater = LayoutInflater.from(context);
         layoutResource = resource;
         this.objects = objects;
+    }
+
+
+    public void setTribe(String tribe) {
+        this.tribe = tribe;
+    }
+
+    public void removeTribe() {
+        this.tribe = null;
     }
 
     static class ViewHolder {
@@ -94,6 +103,9 @@ public class GridAdapter extends ArrayAdapter<Post> {
     }
 
     private String tribesToString(Tribe[] tribes) {
+        if (this.tribe != null) {
+            return tribe;
+        }
         if (tribes.length == 0) {
             return "";
         }

@@ -489,6 +489,12 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             this.posts.add(posts[i]);
         }
 
+        if (tribe.getName().equals("all")) {
+            mAdapter.removeTribe();
+        } else {
+            mAdapter.setTribe(tribe.getName());
+        }
+
         mAdapter.notifyDataSetChanged();
         gridView.setVisibility(View.VISIBLE);
 
