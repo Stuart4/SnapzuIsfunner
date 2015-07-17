@@ -1,5 +1,6 @@
 package org.stuartresearch.snapzuisfunner;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -112,19 +113,10 @@ public class DonationActivity extends AppCompatActivity {
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
-            switch(preference.getKey()) {
-                case "donation_1":
-                    bp.consumePurchase("YOUR PRODUCT ID FROM GOOGLE PLAY CONSOLE HERE");
-                    break;
-                case "donation_5":
-                    bp.consumePurchase("YOUR PRODUCT ID FROM GOOGLE PLAY CONSOLE HERE");
-                    break;
-                case "donation_10":
-                    bp.consumePurchase("YOUR PRODUCT ID FROM GOOGLE PLAY CONSOLE HERE");
-                    break;
-                case "donation_50":
-                    bp.consumePurchase("YOUR PRODUCT ID FROM GOOGLE PLAY CONSOLE HERE");
-                    break;
+            Activity activity = getActivity();
+            if (activity != null) {
+                bp.purchase(activity, preference.getKey());
+                bp.consumePurchase(preference.getKey());
             }
             return true;
         }

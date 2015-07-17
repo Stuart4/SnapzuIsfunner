@@ -24,3 +24,21 @@
 -dontoptimize
 -keep public class org.stuartresearch.snapzuisfunner.xx.Profile extends SugarRecord{*;}
 -keep public class org.stuartresearch.snapzuisfunner.XX.Profile extends SugarApp{*;}
+-keep class butterknife.** { *; }
+-dontwarn butterknife.internal.**
+-keep class **$$ViewBinder { *; }
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <fields>;
+}
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <methods>;
+}
+-dontwarn icepick.**
+-keep class **$$Icicle { *; }
+-keepnames class * { @icepick.Icicle *;}
+-keepclasseswithmembernames class * {
+    @icepick.* <fields>;
+}
+-keep class org.** { *; }

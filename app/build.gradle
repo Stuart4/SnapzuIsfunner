@@ -15,12 +15,12 @@ android {
         applicationId "org.stuartresearch.snapzuisfunner"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 2
+        versionCode 3
         versionName "1.0"
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
         }

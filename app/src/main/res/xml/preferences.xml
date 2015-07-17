@@ -17,7 +17,7 @@
         android:key="setting_rate"
         >
         <intent android:action="android.intent.action.VIEW"
-            android:data="market://details?id=org.stuartresearch.radio91x" />
+            android:data="market://details?id=org.stuartresearch.snapzuisfunner" />
     </Preference>
 
     <Preference
