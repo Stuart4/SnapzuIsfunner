@@ -489,6 +489,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             this.posts.add(posts[i]);
         }
 
+
+
         if (tribe.getName().equals("all")) {
             mAdapter.removeTribe();
         } else {
@@ -499,7 +501,9 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         gridView.setVisibility(View.VISIBLE);
 
         refresh.setRefreshing(false);
-        endlessScrollListener = new EndlessScrollListener();
+        if (posts.length > 5) {
+            endlessScrollListener = new EndlessScrollListener();
+        }
         gridView.setOnScrollListener(endlessScrollListener);
     }
 
