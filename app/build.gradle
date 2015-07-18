@@ -15,7 +15,7 @@ android {
         applicationId "org.stuartresearch.snapzuisfunner"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 4
+        versionCode 5
         versionName "1.1"
     }
     buildTypes {

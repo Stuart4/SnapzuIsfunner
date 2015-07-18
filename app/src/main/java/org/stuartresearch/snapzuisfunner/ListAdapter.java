@@ -69,7 +69,11 @@ public class ListAdapter extends ArrayAdapter<Comment> {
             viewHolder.title.setText(Html.fromHtml(String.format(
                     "<h1>%s</h1><br><font color=\"%s\">%s</font> • <b>%s</b> • %s",
                     title, color, vote, user, date)));
-            viewHolder.paragraph.setText(paragraph);
+            if (paragraph != null) {
+                viewHolder.paragraph.setText(Html.fromHtml(paragraph));
+            } else {
+                viewHolder.paragraph.setText("");
+            }
 
             viewHolder.postIndent.setVisibility(View.VISIBLE);
             viewHolder.indent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0f, convertView.getResources().getDisplayMetrics()) + 0.5f);
@@ -95,7 +99,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         viewHolder.title.setText(Html.fromHtml(String.format(
                 "<font color=\"%s\">%s</font> • <b>%s</b> • %s"
                 , color, vote, user, date)));
-        viewHolder.paragraph.setText(paragraph);
+        viewHolder.paragraph.setText(Html.fromHtml(paragraph));
         viewHolder.postIndent.setVisibility(View.GONE);
         viewHolder.indent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) indent, convertView.getResources().getDisplayMetrics()) + 0.5f);
         viewHolder.indent.requestLayout();
