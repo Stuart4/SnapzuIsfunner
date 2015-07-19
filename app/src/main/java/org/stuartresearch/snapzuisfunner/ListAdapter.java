@@ -2,6 +2,7 @@ package org.stuartresearch.snapzuisfunner;
 
 import android.content.Context;
 import android.text.Html;
+import android.text.Spanned;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,7 +94,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         String vote = object.getVote();
         String date = object.getDate();
         String icon = object.getImageLink();
-        String paragraph = object.getParagraph();
+        Spanned paragraph = Html.fromHtml(object.getParagraph());
         String color = "#D32F2F";
         int indent = object.getIndent() * 6;
 
@@ -106,7 +107,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         viewHolder.title.setText(Html.fromHtml(String.format(
                 "<font color=\"%s\">%s</font> • <b>%s</b> • %s"
                 , color, vote, user, date)));
-        viewHolder.paragraph.setText(Html.fromHtml(paragraph));
+        viewHolder.paragraph.setText(paragraph.subSequence(0, paragraph.length() - 2));
         viewHolder.postIndent.setVisibility(View.GONE);
         viewHolder.indent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) indent, convertView.getResources().getDisplayMetrics()) + 0.5f);
         viewHolder.indent.requestLayout();
