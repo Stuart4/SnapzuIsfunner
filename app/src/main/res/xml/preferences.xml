@@ -4,7 +4,7 @@
     android:layout_width="match_parent">
     <Preference
         android:title="Donate"
-        android:summary="Show your support for Snapzu Is Funner"
+        android:summary="Show your support for Tapzu"
         android:key="setting_donate">
         <intent android:action="android.intent.action.view"
             android:targetPackage="org.stuartresearch.snapzuisfunner"
@@ -13,7 +13,7 @@
 
     <Preference
         android:title="Rate The App"
-        android:summary="Help others discover Snapzu Is Funner"
+        android:summary="Help others discover Tapzu"
         android:key="setting_rate"
         >
         <intent android:action="android.intent.action.VIEW"
@@ -22,6 +22,6 @@
 
     <Preference
         android:title="Licenses"
-        android:summary="What makes Snapzu Is Funner possible"
+        android:summary="What makes Tapzu possible"
         android:key="setting_license" />
 </PreferenceScreen>
