@@ -79,6 +79,7 @@ public class Login extends ActionBarActivity {
     protected void onDestroy() {
         super.onDestroy();
         MainActivity.bus.unregister(this);
+        webView.destroy();
     }
 
 

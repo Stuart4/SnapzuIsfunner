@@ -145,6 +145,18 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mWebView.onPause();
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        mWebView.onResume();
+    }
+
     public void onWebviewItemSelected(int id) {
         switch (id) {
             case R.id.post_1:
@@ -225,6 +237,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     protected void onDestroy() {
         super.onDestroy();
         MainActivity.bus.unregister(this);
+        mWebView.destroy();
     }
 
     @Override
@@ -283,6 +296,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     public void onPanelCollapsed(View view) {
         showingComments = false;
+        mWebView.onResume();
         arrowBackUp.setIcon(R.drawable.ic_arrow_back_black_24dp);
         arrowBackUp.setTitle("Back");
         arrowForwardDown.setIcon(R.drawable.ic_arrow_forward_black_24dp);
@@ -298,6 +312,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     public void onPanelExpanded(View view) {
         showingComments = true;
+        mWebView.onPause();
         arrowBackUp.setIcon(R.drawable.ic_keyboard_arrow_up_black_24dp);
         arrowBackUp.setTitle("Up Vote");
         arrowForwardDown.setIcon(R.drawable.ic_keyboard_arrow_down_black_24dp);

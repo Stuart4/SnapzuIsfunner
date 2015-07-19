@@ -100,6 +100,25 @@ public class ActionActivity extends ActionBarActivity implements View.OnTouchLis
         overridePendingTransition(0, R.anim.slide_right);
     }
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mWebView.onPause();
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        mWebView.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mWebView.destroy();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
