@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import org.stuartresearch.SnapzuAPI.Comment;
 import org.stuartresearch.SnapzuAPI.Post;
 
@@ -33,6 +35,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
     static class ViewHolder {
         ImageView indent;
         ImageView postIndent;
+        ImageView userIcon;
         TextView title;
         TextView paragraph;
     }
@@ -53,6 +56,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         viewHolder.paragraph = (TextView) convertView.findViewById(R.id.comment_paragraph);
         viewHolder.indent = (ImageView) convertView.findViewById(R.id.comment_indent);
         viewHolder.postIndent = (ImageView) convertView.findViewById(R.id.post_padding);
+        viewHolder.userIcon = (ImageView) convertView.findViewById(R.id.userIcon);
 
         if (position == 0) {
             String color = "#D32F2F";
@@ -75,6 +79,8 @@ public class ListAdapter extends ArrayAdapter<Comment> {
                 viewHolder.paragraph.setText("");
             }
 
+            viewHolder.userIcon.setVisibility(View.GONE);
+
             viewHolder.postIndent.setVisibility(View.VISIBLE);
             viewHolder.indent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0f, convertView.getResources().getDisplayMetrics()) + 0.5f);
             viewHolder.indent.requestLayout();
@@ -86,6 +92,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         String user = object.getUser();
         String vote = object.getVote();
         String date = object.getDate();
+        String icon = object.getImageLink();
         String paragraph = object.getParagraph();
         String color = "#D32F2F";
         int indent = object.getIndent() * 6;
@@ -103,6 +110,9 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         viewHolder.postIndent.setVisibility(View.GONE);
         viewHolder.indent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) indent, convertView.getResources().getDisplayMetrics()) + 0.5f);
         viewHolder.indent.requestLayout();
+
+        viewHolder.userIcon.setVisibility(View.VISIBLE);
+        Picasso.with(convertView.getContext()).load(icon).into(viewHolder.userIcon);
 
         return convertView;
     }

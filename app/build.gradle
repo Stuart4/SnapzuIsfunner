@@ -71,6 +71,8 @@ dependencies {
     compile 'com.github.kenumir:MaterialSettings:v.1.2.2'
     // DONATIONS
     compile 'com.anjlab.android.iab.v3:library:1.0.+@aar'
+    // CIRCULAR IMAGEVIEW
+    compile 'de.hdodenhof:circleimageview:1.3.0'
     // FOR THE API
     compile files('libs/SnapzuAPI.jar')
 }

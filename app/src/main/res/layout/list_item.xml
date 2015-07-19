@@ -15,13 +15,27 @@
         android:orientation="vertical"
         android:background="@color/md_white_1000">
 
-        <TextView
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/comment_title"
-            android:textColor="@color/md_grey_600"
             android:padding="5dp"
-            android:text="Hi there" />
+            android:layout_height="match_parent">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/userIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:border_width="0dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/comment_title"
+                android:textColor="@color/md_grey_600"
+                android:paddingLeft="5dp"
+                android:text="Hi there" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
