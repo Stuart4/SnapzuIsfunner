@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.andexert.library.RippleView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    app:rv_framerate="30"
-    app:rv_zoom="true"
-    app:rv_rippleDuration="400"
-    app:rv_color="@color/primary_dark"
-    app:rv_zoomScale="1.03"
-    app:rv_centered="false">
-
-    <RelativeLayout
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/panel_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -61,4 +50,3 @@
             style="@style/TextCardExtraMedium" />
 
     </RelativeLayout>
-</com.andexert.library.RippleView>
