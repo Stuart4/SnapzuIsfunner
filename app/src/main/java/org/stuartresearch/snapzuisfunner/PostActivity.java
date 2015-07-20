@@ -13,9 +13,9 @@ import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ListView;
 import android.widget.Toast;
 
+import com.etsy.android.grid.StaggeredGridView;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrInterface;
@@ -30,18 +30,17 @@ import org.stuartresearch.SnapzuAPI.Post;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
-import icepick.Icicle;
 
 
 public class PostActivity extends AppCompatActivity implements View.OnTouchListener, SlidingUpPanelLayout.PanelSlideListener{
 
     @Bind(R.id.post_webview) WebView mWebView;
     @Bind(R.id.post_toolbar) Toolbar toolbar;
-    @Bind(R.id.comment_listview) ListView listView;
+    @Bind(R.id.comment_grid_view) StaggeredGridView gridView;
     @Bind(R.id.sliding_layout) SlidingUpPanelLayout slidingUpPanelLayout;
 
-    @Icicle Post post;
-    @Icicle Comment[] comments;
+    Post post;
+    Comment[] comments;
 
     MenuItem arrowBackUp;
     MenuItem arrowForwardDown;
@@ -86,7 +85,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
         // Prevent sliding
         mWebView.setOnTouchListener(this);
-        listView.setOnTouchListener(this);
+        gridView.setOnTouchListener(this);
 
         // Configure webview
         WebSettings settings = mWebView.getSettings();
@@ -257,7 +256,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     public void onCommentsReceive(PopulateComments.CommentsPackage commentsPackage) {
         this.comments = commentsPackage.comments;
         mListAdapter = new ListAdapter(this, R.layout.list_item, comments, post);
-        listView.setAdapter(mListAdapter);
+        gridView.setAdapter(mListAdapter);
         mListAdapter.notifyDataSetChanged();
     }
 
@@ -280,7 +279,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     // ON COMMENT SELECTED
-    @OnItemClick(R.id.comment_listview)
+    @OnItemClick(R.id.comment_grid_view)
     public void commentSelected(int position) {
         Toast.makeText(this, "Comment selection is not implemented", Toast.LENGTH_SHORT).show();
     }

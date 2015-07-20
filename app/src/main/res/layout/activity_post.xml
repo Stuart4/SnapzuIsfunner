@@ -53,13 +53,15 @@
             </android.support.v7.widget.Toolbar>
 
 
-            <ListView
+            <com.etsy.android.grid.StaggeredGridView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/comment_grid_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/comment_listview"
-                android:divider="@color/primary_light"
-                android:dividerHeight="1dp">
-            </ListView>
+                app:item_margin="2dp"
+                app:column_count_landscape="1"
+                app:column_count_portrait="1"/>
 
         </LinearLayout>
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
