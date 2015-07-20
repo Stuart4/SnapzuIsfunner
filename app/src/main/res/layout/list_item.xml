@@ -9,6 +9,11 @@
         android:id="@+id/comment_indent"
         android:src="@color/primary_light"/>
 
+    <ImageView
+        android:layout_width="3dp"
+        android:layout_height="match_parent"
+        android:id="@+id/comment_color" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

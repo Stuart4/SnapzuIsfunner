@@ -37,18 +37,22 @@ public class ListAdapter extends ArrayAdapter<Comment> {
     private int layoutResource;
     private Post post;
 
+    private int[] colors;
+
     public ListAdapter(Context context, int resource, Comment[] objects, Post post) {
         super(context, resource, objects);
         this.layoutResource = resource;
         this.objects = objects;
         mLayoutInflater = LayoutInflater.from(context);
         this.post = post;
+        colors = context.getApplicationContext().getResources().getIntArray(R.array.comment_colors);
     }
 
     static class ViewHolder {
         ImageView indent;
         ImageView postIndent;
         ImageView userIcon;
+        ImageView commentColor;
         TextView title;
         TextView paragraph;
     }
@@ -74,6 +78,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         viewHolder.indent = (ImageView) convertView.findViewById(R.id.comment_indent);
         viewHolder.postIndent = (ImageView) convertView.findViewById(R.id.post_padding);
         viewHolder.userIcon = (ImageView) convertView.findViewById(R.id.userIcon);
+        viewHolder.commentColor = (ImageView) convertView.findViewById(R.id.comment_color);
 
         viewHolder.title.setTextAppearance(context, titleStyle);
         viewHolder.paragraph.setTextAppearance(context, paragraphStyle);
@@ -100,6 +105,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
             }
 
             viewHolder.userIcon.setVisibility(View.GONE);
+            viewHolder.commentColor.setVisibility(View.GONE);
 
             viewHolder.postIndent.setVisibility(View.VISIBLE);
             viewHolder.indent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0f, convertView.getResources().getDisplayMetrics()) + 0.5f);
@@ -114,24 +120,33 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         String date = object.getDate();
         String icon = object.getImageLink();
         Spanned paragraph = Html.fromHtml(object.getParagraph());
-        String color = "#D32F2F";
-        int indent = object.getIndent() * 6;
+        String voteColor = "#D32F2F";
+        int indent = object.getIndent();
+        int commentColor = context.getResources().getColor(android.R.color.transparent);
 
-
+        if (indent != 0) {
+            commentColor = colors[object.getIndent() % colors.length];
+            viewHolder.commentColor.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.commentColor.setVisibility(View.GONE);
+        }
 
         if (!vote.isEmpty() && Float.parseFloat(vote) > 0) {
-            color = "#1976D2";
+            voteColor = "#1976D2";
         }
 
         viewHolder.title.setText(Html.fromHtml(String.format(
-                "<font color=\"%s\">%s</font> • <b>%s</b> • %s"
-                , color, vote, user, date)));
+                "<font color=\"%s\"><mark>%s</mark></font> • <b>%s</b> • %s"
+                , voteColor, vote, user, date)));
         viewHolder.paragraph.setText(paragraph.subSequence(0, paragraph.length() - 2));
+        viewHolder.commentColor.setBackgroundColor(commentColor);
+
         viewHolder.postIndent.setVisibility(View.GONE);
-        viewHolder.indent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) indent, convertView.getResources().getDisplayMetrics()) + 0.5f);
+        viewHolder.indent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) indent * 6, convertView.getResources().getDisplayMetrics()) + 0.5f);
         viewHolder.indent.requestLayout();
 
         viewHolder.userIcon.setVisibility(View.VISIBLE);
+
         if (!icon.isEmpty()) {
             Picasso.with(convertView.getContext()).load(icon).into(viewHolder.userIcon);
         }
