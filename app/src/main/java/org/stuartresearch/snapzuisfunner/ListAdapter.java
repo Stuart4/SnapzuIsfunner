@@ -145,13 +145,11 @@ public class ListAdapter extends ArrayAdapter<Comment> {
             viewHolder.title.setText(Html.fromHtml(String.format(
                     "<font color=\"%s\" bgcolor=\"F056FA\"><mark>%s</mark></font> • <b>%s</b> • %s"
                     , voteColor, vote, user, date)));
-            viewHolder.title.setTextColor(context.getResources().getColor(R.color.icons));
             viewHolder.opBanner.setBackground(context.getResources().getDrawable(R.drawable.op_banner));
         } else {
             viewHolder.title.setText(Html.fromHtml(String.format(
                     "<font color=\"%s\" bgcolor=\"F056FA\"><mark>%s</mark></font> • <b>%s</b> • %s"
                     , voteColor, vote, user, date)));
-            viewHolder.title.setTextColor(context.getResources().getColor(R.color.primary_dark));
             viewHolder.opBanner.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
         }
 
