@@ -34,7 +34,6 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.otto.Bus;
-import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 import com.squareup.otto.ThreadEnforcer;
 import com.squareup.picasso.Picasso;
@@ -417,6 +416,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         if (profile != null) {
             i.putExtra("cookies", profile.cookies);
         }
+        i.putExtra("post", Parcels.wrap(new PostActivity.SinglePost(post)));
         startActivity(i);
     }
 
@@ -576,18 +576,6 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         drawer.addItem(drawerProfile, 0);
     }
 
-    public static class SinglePostPackage {
-        public final Post post;
-
-        public SinglePostPackage(Post post) {
-            this.post = post;
-        }
-    }
-
-    @Produce
-    public SinglePostPackage produceSinglePostPackage() {
-        return new SinglePostPackage(this.post);
-    }
 
     @Subscribe
     public void onLoadMoreRequest(EndlessScrollListener.LoadMorePackage loadMorePackage) {
