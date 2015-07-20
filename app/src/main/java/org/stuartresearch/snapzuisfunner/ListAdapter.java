@@ -1,6 +1,8 @@
 package org.stuartresearch.snapzuisfunner;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.TypedValue;
@@ -20,6 +22,16 @@ import org.stuartresearch.SnapzuAPI.Post;
  * Created by jake on 7/7/15.
  */
 public class ListAdapter extends ArrayAdapter<Comment> {
+
+    public static final String SETTING_FONT = "setting_font_size";
+    public static final String SETTING_FONT_SMALL = "Small";
+    public static final String SETTING_FONT_MEDIUM = "Medium";
+    public static final String SETTING_FONT_LARGE = "Large";
+
+
+    private int titleStyle;
+    private int paragraphStyle;
+
     private final LayoutInflater mLayoutInflater;
     private Comment[] objects;
     private int layoutResource;
@@ -53,11 +65,18 @@ public class ListAdapter extends ArrayAdapter<Comment> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
+        Context context = convertView.getContext();
+
+        getStyles(context);
+
         viewHolder.title = (TextView) convertView.findViewById(R.id.comment_title);
         viewHolder.paragraph = (TextView) convertView.findViewById(R.id.comment_paragraph);
         viewHolder.indent = (ImageView) convertView.findViewById(R.id.comment_indent);
         viewHolder.postIndent = (ImageView) convertView.findViewById(R.id.post_padding);
         viewHolder.userIcon = (ImageView) convertView.findViewById(R.id.userIcon);
+
+        viewHolder.title.setTextAppearance(context, titleStyle);
+        viewHolder.paragraph.setTextAppearance(context, paragraphStyle);
 
         if (position == 0) {
             String color = "#D32F2F";
@@ -113,7 +132,9 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         viewHolder.indent.requestLayout();
 
         viewHolder.userIcon.setVisibility(View.VISIBLE);
-        Picasso.with(convertView.getContext()).load(icon).into(viewHolder.userIcon);
+        if (!icon.isEmpty()) {
+            Picasso.with(convertView.getContext()).load(icon).into(viewHolder.userIcon);
+        }
 
         return convertView;
     }
@@ -123,4 +144,23 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         return objects.length + 1;
     }
 
+    private void getStyles(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        switch (prefs.getString(SETTING_FONT, SETTING_FONT_MEDIUM)) {
+            case SETTING_FONT_SMALL:
+                titleStyle =  R.style.TextCommentTitleSmall;
+                paragraphStyle =  R.style.TextCommentParagraphSmall;
+                break;
+            case SETTING_FONT_LARGE:
+                titleStyle = R.style.TextCommentTitleLarge;
+                paragraphStyle =  R.style.TextCommentParagraphLarge;
+                break;
+            case SETTING_FONT_MEDIUM:
+            default:
+                titleStyle = R.style.TextCommentTitleMedium;
+                paragraphStyle =  R.style.TextCommentParagraphMedium;
+                break;
+        }
+    }
 }

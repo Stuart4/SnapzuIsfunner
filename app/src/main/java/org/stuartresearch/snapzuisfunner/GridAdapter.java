@@ -1,6 +1,8 @@
 package org.stuartresearch.snapzuisfunner;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,17 @@ import java.util.ArrayList;
  * Created by jake on 7/4/15.
  */
 public class GridAdapter extends ArrayAdapter<Post> {
+
+    public static final String SETTING_FONT = "setting_font_size";
+    public static final String SETTING_FONT_SMALL = "Small";
+    public static final String SETTING_FONT_MEDIUM = "Medium";
+    public static final String SETTING_FONT_LARGE = "Large";
+
+
+    private int titleStyle;
+    private int paragraphStyle;
+    private int extraStyle;
+
     private final LayoutInflater mLayoutInflater;
     private ArrayList<Post> objects;
     private int layoutResource;
@@ -73,10 +86,20 @@ public class GridAdapter extends ArrayAdapter<Post> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
+
+        Context context = convertView.getContext();
+
+        getStyles(context);
+
         viewHolder.imgView = (DynamicHeightImageView) convertView.findViewById(R.id.grid_image);
         viewHolder.extra = (TextView) convertView.findViewById(R.id.grid_extra);
         viewHolder.title = (TextView) convertView.findViewById(R.id.grid_title);
         viewHolder.paragraph = (TextView) convertView.findViewById(R.id.grid_paragraph);
+
+        viewHolder.title.setTextAppearance(context, titleStyle);
+        viewHolder.paragraph.setTextAppearance(context, paragraphStyle);
+        viewHolder.extra.setTextAppearance(context, extraStyle);
+
 
         if (Float.parseFloat(score) > 0) {
             color = "#1976D2";
@@ -122,4 +145,28 @@ public class GridAdapter extends ArrayAdapter<Post> {
 
         return sb.toString();
     }
+
+    private void getStyles(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        switch (prefs.getString(SETTING_FONT, SETTING_FONT_MEDIUM)) {
+            case SETTING_FONT_SMALL:
+                titleStyle =  R.style.TextCardTitleSmall;
+                paragraphStyle =  R.style.TextCardParagraphSmall;
+                extraStyle = R.style.TextCardExtraSmall;
+                break;
+            case SETTING_FONT_LARGE:
+                titleStyle = R.style.TextCardTitleLarge;
+                paragraphStyle =  R.style.TextCardParagraphLarge;
+                extraStyle = R.style.TextCardExtraLarge;
+                break;
+            case SETTING_FONT_MEDIUM:
+            default:
+                titleStyle = R.style.TextCardTitleMedium;
+                paragraphStyle =  R.style.TextCardParagraphMedium;
+                extraStyle = R.style.TextCardExtraMedium;
+                break;
+        }
+    }
+
 }

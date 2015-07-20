@@ -117,7 +117,7 @@ public class SettingsActivity extends AppCompatActivity {
         public void onProductPurchased(String s, TransactionDetails transactionDetails) {
             Context context = getActivity();
             if (context != null) {
-                Toast.makeText(context, "Thank You", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Thanks Snapper!", Toast.LENGTH_SHORT).show();
             }
         }
 

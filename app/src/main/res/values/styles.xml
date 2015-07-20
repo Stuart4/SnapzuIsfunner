@@ -20,8 +20,6 @@
         <item name="android:actionBarStyle">@style/MyActionBar</item>
         <item name="android:navigationBarColor" tools:targetApi="21">@color/primary_dark</item>
 
-
-
     </style>
     <!-- ActionBar styles -->
     <style name="MyActionBar"
@@ -30,5 +28,93 @@
         <item name="android:textColor">@color/primary_material_dark</item>
     </style>
 
+
+    <style name="TextCardTitleMedium" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textAlignment">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:background">@color/primary_dark</item>
+        <item name="android:alpha">0.8</item>
+        <item name="android:typeface">normal</item>
+        <item name="android:textColor">@color/icons</item>
+        <item name="android:maxHeight">200dp</item>
+        <item name="android:elegantTextHeight">false</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+    </style>
+
+
+    <style name="TextCardTitleSmall" parent="TextCardTitleMedium">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextCardTitleLarge" parent="TextCardTitleMedium">>
+        <item name="android:textSize">30sp</item>
+    </style>
+
+    <style name="TextCardParagraphMedium" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textSize">14sp</item>
+        <item name="android:typeface">normal</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+    </style>
+
+    <style name="TextCardParagraphSmall" parent="TextCardParagraphMedium">
+        <item name="android:textSize">8sp</item>
+    </style>
+
+    <style name="TextCardParagraphLarge" parent="TextCardParagraphMedium">>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="TextCardExtraMedium" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textSize">14sp</item>
+        <item name="android:typeface">normal</item>
+        <item name="android:textColor">@color/md_grey_600</item>
+        <item name="android:paddingBottom">20dp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+    </style>
+
+    <style name="TextCardExtraSmall" parent="TextCardExtraMedium">
+        <item name="android:textSize">8sp</item>
+    </style>
+
+    <style name="TextCardExtraLarge" parent="TextCardExtraMedium">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="TextCommentTitleMedium" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textSize">14sp</item>
+        <item name="android:typeface">normal</item>
+        <item name="android:textColor">@color/md_grey_600</item>
+        <item name="android:paddingLeft">5dp</item>
+    </style>
+
+    <style name="TextCommentTitleSmall" parent="TextCommentTitleMedium">
+        <item name="android:textSize">8sp</item>
+    </style>
+
+    <style name="TextCommentTitleLarge" parent="TextCommentTitleMedium">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="TextCommentParagraphMedium" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textSize">14sp</item>
+        <item name="android:typeface">normal</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="TextCommentParagraphLarge" parent="TextCommentParagraphMedium">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="TextCommentParagraphSmall" parent="TextCommentParagraphMedium">
+        <item name="android:textSize">8sp</item>
+    </style>
 
 </resources>
