@@ -1,54 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/panel_content"
-    android:layout_width="match_parent"
+<com.andexert.library.RippleView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:descendantFocusability="blocksDescendants"
-    android:orientation="horizontal"
-    android:background="@color/md_white_1000"
-    android:elevation="5dp">
+    app:rv_framerate="30"
+    app:rv_zoom="true"
+    app:rv_rippleDuration="400"
+    app:rv_color="@color/primary_dark"
+    app:rv_zoomScale="1.03"
+    app:rv_centered="false">
 
-    <com.etsy.android.grid.util.DynamicHeightImageView
-        android:id="@+id/grid_image"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:src="@android:color/white"
-        android:visibility="gone"
-
-
-        />
-
-    <TextView
+    <RelativeLayout
+        android:id="@+id/panel_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Title"
-        android:id="@+id/grid_title"
-        android:layout_gravity="center_horizontal|top"
-        android:layout_alignBottom="@+id/grid_image"
-        android:layout_centerHorizontal="true"
-        style="@style/TextCardTitleMedium" />
+        android:orientation="horizontal"
+        android:background="@android:color/white"
+        android:elevation="5dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Paragraph"
-        android:id="@+id/grid_paragraph"
-        android:layout_below="@+id/grid_title"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        style="@style/TextCardParagraphMedium" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Extras"
-        android:id="@+id/grid_extra"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_below="@+id/grid_paragraph"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        style="@style/TextCardExtraMedium" />
+        <com.etsy.android.grid.util.DynamicHeightImageView
+            android:id="@+id/grid_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@android:color/white"
+            android:visibility="gone"
+            />
 
-</RelativeLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Title"
+            android:id="@+id/grid_title"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_alignBottom="@+id/grid_image"
+            android:layout_centerHorizontal="true"
+            style="@style/TextCardTitleMedium" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Paragraph"
+            android:id="@+id/grid_paragraph"
+            android:layout_below="@+id/grid_title"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            style="@style/TextCardParagraphMedium" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Extras"
+            android:id="@+id/grid_extra"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_below="@+id/grid_paragraph"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            style="@style/TextCardExtraMedium" />
+
+    </RelativeLayout>
+</com.andexert.library.RippleView>
