@@ -17,23 +17,22 @@
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:padding="5dp"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/userIcon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 app:border_width="1dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/comment_title"
-                style="@style/TextCommentTitleMedium"
-                android:text="Hi there" />
+                style="@style/TextCommentTitleMedium" />
 
         </LinearLayout>
 
@@ -41,9 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/comment_paragraph"
-            android:textColor="@color/primary_text"
-            android:padding="5dp"
-            android:text="I am a comment." />
+            style="@style/TextCommentParagraphMedium" />
 
         <ImageView
             android:layout_width="match_parent"
