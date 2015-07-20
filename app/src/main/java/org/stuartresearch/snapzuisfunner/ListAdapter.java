@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -55,6 +56,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         ImageView commentColor;
         TextView title;
         TextView paragraph;
+        LinearLayout opBanner;
     }
 
     @Override
@@ -79,6 +81,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         viewHolder.postIndent = (ImageView) convertView.findViewById(R.id.post_padding);
         viewHolder.userIcon = (ImageView) convertView.findViewById(R.id.userIcon);
         viewHolder.commentColor = (ImageView) convertView.findViewById(R.id.comment_color);
+        viewHolder.opBanner = (LinearLayout) convertView.findViewById(R.id.comment_title_banner);
 
         viewHolder.title.setTextAppearance(context, titleStyle);
         viewHolder.paragraph.setTextAppearance(context, paragraphStyle);
@@ -98,11 +101,14 @@ public class ListAdapter extends ArrayAdapter<Comment> {
             viewHolder.title.setText(Html.fromHtml(String.format(
                     "<h1>%s</h1><br><font color=\"%s\">%s</font> • <b>%s</b> • %s",
                     title, color, vote, user, date)));
+            viewHolder.title.setTextColor(context.getResources().getColor(R.color.primary_dark));
             if (paragraph != null) {
                 viewHolder.paragraph.setText(Html.fromHtml(paragraph));
             } else {
                 viewHolder.paragraph.setText("");
             }
+
+            viewHolder.opBanner.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
 
             viewHolder.userIcon.setVisibility(View.GONE);
             viewHolder.commentColor.setVisibility(View.GONE);
@@ -135,9 +141,21 @@ public class ListAdapter extends ArrayAdapter<Comment> {
             voteColor = "#1976D2";
         }
 
-        viewHolder.title.setText(Html.fromHtml(String.format(
-                "<font color=\"%s\"><mark>%s</mark></font> • <b>%s</b> • %s"
-                , voteColor, vote, user, date)));
+        if (post.getUser().equals(object.getUser())) {
+            viewHolder.title.setText(Html.fromHtml(String.format(
+                    "<font color=\"%s\" bgcolor=\"F056FA\"><mark>%s</mark></font> • <b>%s</b> • %s"
+                    , voteColor, vote, user, date)));
+            viewHolder.title.setTextColor(context.getResources().getColor(R.color.icons));
+            viewHolder.opBanner.setBackground(context.getResources().getDrawable(R.drawable.op_banner));
+        } else {
+            viewHolder.title.setText(Html.fromHtml(String.format(
+                    "<font color=\"%s\" bgcolor=\"F056FA\"><mark>%s</mark></font> • <b>%s</b> • %s"
+                    , voteColor, vote, user, date)));
+            viewHolder.title.setTextColor(context.getResources().getColor(R.color.primary_dark));
+            viewHolder.opBanner.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
+        }
+
+
         viewHolder.paragraph.setText(paragraph.subSequence(0, paragraph.length() - 2));
         viewHolder.commentColor.setBackgroundColor(commentColor);
 
