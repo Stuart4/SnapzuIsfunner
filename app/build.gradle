@@ -47,15 +47,13 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     // GRID OF CARDVIEWS
     compile 'com.etsy.android.grid:library:1.0.5'
-    // SLIDING ACTIVITY
-    compile 'com.r0adkll:slidableactivity:2.0.3'
     // EVENT BUS
     compile 'com.squareup:otto:1.3.8'
     // STATE RESTORATION
     compile 'frankiesardo:icepick:3.0.2'
     provided 'frankiesardo:icepick-processor:3.0.2'
     // SWIPE UP PANEL
-    compile 'com.sothree.slidinguppanel:library:3.0.0'
+    compile 'com.sothree.slidinguppanel:library:3.1.0'
     // DIALOGS
     compile 'com.afollestad:material-dialogs:0.7.6.0'
     // SQLITE CRUD OPERATIONS

@@ -13,9 +13,6 @@ import android.widget.Toast;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrInterface;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -24,7 +21,6 @@ import butterknife.ButterKnife;
 public class SettingsActivity extends AppCompatActivity {
 
     @Bind(R.id.settings_toolbar) Toolbar toolbar;
-    SlidrInterface slidrInterface;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,9 +33,6 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Settings");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Sliding mechanism
-        SlidrConfig config = new SlidrConfig.Builder().sensitivity(0.5f).build();
-        slidrInterface = Slidr.attach(this, config);
 
     }
 

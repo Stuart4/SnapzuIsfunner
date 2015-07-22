@@ -37,8 +37,10 @@
             android:name=".PostActivity"
             android:label="@string/title_activity_post"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/Theme.Slidr.Slidable" >
-            <meta-data
+            android:theme="@style/Theme.Slidr.Slidable"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize" >
+
+        <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.stuartresearch.snapzuisfunner.MainActivity" />
         </activity>

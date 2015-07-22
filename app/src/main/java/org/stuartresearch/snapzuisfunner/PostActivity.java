@@ -16,9 +16,6 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.etsy.android.grid.StaggeredGridView;
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrInterface;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.otto.Subscribe;
 
@@ -50,8 +47,6 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
     ListAdapter mListAdapter;
 
-    SlidrInterface slidrInterface;
-
     boolean showingComments = false;
 
     String url;
@@ -72,11 +67,6 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
         // slide in
         overridePendingTransition(R.anim.slide_left, 0);
-
-        // Sliding mechanism
-        SlidrConfig config = new SlidrConfig.Builder().sensitivity(0.5f).build();
-        slidrInterface = Slidr.attach(this, config);
-
 
         slidingUpPanelLayout.setPanelSlideListener(this);
 
