@@ -14,17 +14,17 @@
         <item>@color/a</item>
         <item>@color/c</item>
         <item>@color/m</item>
-        <item>@color/h</item>
+        <item>@color/o</item>
         <item>@color/d</item>
         <item>@color/b</item>
         <item>@color/f</item>
         <item>@color/l</item>
-        <item>@color/g</item>
         <item>@color/j</item>
         <item>@color/e</item>
+        <item>@color/h</item>
         <item>@color/k</item>
+        <item>@color/g</item>
         <item>@color/n</item>
         <item>@color/i</item>
-        <item>@color/o</item>
     </array>
 </resources>
