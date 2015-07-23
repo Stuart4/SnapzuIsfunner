@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import org.stuartresearch.SnapzuAPI.Comment;
 import org.stuartresearch.SnapzuAPI.Post;
@@ -164,7 +164,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         viewHolder.userIcon.setVisibility(View.VISIBLE);
 
         if (!icon.isEmpty()) {
-            Picasso.with(convertView.getContext()).load(icon).into(viewHolder.userIcon);
+            Glide.with(convertView.getContext()).load(icon).fitCenter().into(viewHolder.userIcon);
         }
 
         return convertView;

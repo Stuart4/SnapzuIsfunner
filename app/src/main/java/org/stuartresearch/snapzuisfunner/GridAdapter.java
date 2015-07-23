@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.etsy.android.grid.util.DynamicHeightImageView;
-import com.squareup.picasso.Picasso;
 
 import org.stuartresearch.SnapzuAPI.Post;
 import org.stuartresearch.SnapzuAPI.Tribe;
@@ -112,7 +112,7 @@ public class GridAdapter extends ArrayAdapter<Post> {
         viewHolder.paragraph.setText(paragraph);
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
-            Picasso.with(convertView.getContext()).load(object.getItemImage()).into(viewHolder.imgView);
+            Glide.with(convertView.getContext()).load(object.getItemImage()).into(viewHolder.imgView);
             viewHolder.imgView.setVisibility(View.VISIBLE);
         } else {
             viewHolder.imgView.setVisibility(View.GONE);

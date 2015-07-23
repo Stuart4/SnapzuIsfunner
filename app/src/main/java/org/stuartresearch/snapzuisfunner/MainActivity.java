@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.Glide;
 import com.etsy.android.grid.StaggeredGridView;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -36,7 +37,6 @@ import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.squareup.otto.ThreadEnforcer;
-import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 import org.stuartresearch.SnapzuAPI.Post;
@@ -118,12 +118,12 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         DrawerImageLoader.init(new DrawerImageLoader.IDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable drawable) {
-                Picasso.with(imageView.getContext()).load(uri).placeholder(R.drawable.profile).into(imageView);
+                Glide.with(imageView.getContext()).load(uri).placeholder(R.drawable.profile).into(imageView);
             }
 
             @Override
             public void cancel(ImageView imageView) {
-                Picasso.with(imageView.getContext()).cancelRequest(imageView);
+                Glide.clear(imageView);
             }
 
             @Override
