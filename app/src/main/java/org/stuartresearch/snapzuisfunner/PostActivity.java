@@ -1,10 +1,13 @@
 package org.stuartresearch.snapzuisfunner;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -13,6 +16,7 @@ import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.etsy.android.grid.StaggeredGridView;
@@ -194,7 +198,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
                 openComments();
                 break;
             case R.id.post_5:
-                Toast.makeText(this, "Search is not implemented.", Toast.LENGTH_SHORT).show();
+                presentSearchDialog();
                 break;
             case R.id.post_6:
                 Toast.makeText(this, "Sort is not implemented.", Toast.LENGTH_SHORT).show();
@@ -360,6 +364,37 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     public void onPanelSlide(View view, float v) {
 
+    }
+
+    public void presentSearchDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_comment_search, null);
+        final TextView searchText = (TextView) view.findViewById(R.id.comment_search_text);
+
+        builder.setView(view);
+
+        builder.setTitle("Find In Comments");
+
+        builder.setPositiveButton("Search", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                onSearchTerm(searchText.getText().toString());
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.show();
+    }
+
+    public void onSearchTerm(String term) {
+        Toast.makeText(this, "searching for " + term, Toast.LENGTH_SHORT).show();
     }
 
     @Parcel

@@ -11,4 +11,6 @@
     <string name="title_activity_action">ActionActivity</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_donation">DonationActivity</string>
+
+    <string name="search_comments">Search Comments</string>
 </resources>
