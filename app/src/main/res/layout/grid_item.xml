@@ -1,74 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/panel_content"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:descendantFocusability="blocksDescendants"
-    android:orientation="horizontal"
-    android:background="@color/md_white_1000"
-    android:elevation="5dp">
-
-    <com.etsy.android.grid.util.DynamicHeightImageView
-        android:id="@+id/grid_image"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:src="@android:color/white"
-        android:visibility="gone"
-
-
-        />
-
-    <TextView
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/panel_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Title"
-        android:id="@+id/grid_title"
-        android:layout_gravity="center_horizontal|top"
-        android:layout_alignBottom="@+id/grid_image"
-        android:layout_centerHorizontal="true"
-        android:textSize="20sp"
-        android:textAlignment="center"
-        android:gravity="center"
-        android:background="@color/primary_dark"
-        android:alpha="0.8"
-        android:typeface="normal"
-        android:textColor="@color/icons"
-        android:enabled="false"
-        android:maxHeight="200dp"
-        android:elevation="0dp"
-        android:elegantTextHeight="false"
-        android:autoText="false"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"/>
+        android:orientation="horizontal"
+        android:background="@android:color/white"
+        android:elevation="5dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Paragraph"
-        android:id="@+id/grid_paragraph"
-        android:layout_below="@+id/grid_title"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:textColor="@color/primary_text"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Extras"
-        android:id="@+id/grid_extra"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_below="@+id/grid_paragraph"
-        android:textColor="@color/md_grey_600"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingBottom="20dp"/>
+        <com.etsy.android.grid.util.DynamicHeightImageView
+            android:id="@+id/grid_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@android:color/white"
+            android:visibility="gone"
+            />
 
-</RelativeLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Title"
+            android:id="@+id/grid_title"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_alignBottom="@+id/grid_image"
+            android:layout_centerHorizontal="true"
+            style="@style/TextCardTitleMedium" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Paragraph"
+            android:id="@+id/grid_paragraph"
+            android:layout_below="@+id/grid_title"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            style="@style/TextCardParagraphMedium" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Extras"
+            android:id="@+id/grid_extra"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_below="@+id/grid_paragraph"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            style="@style/TextCardExtraMedium" />
+
+    </RelativeLayout>

@@ -9,4 +9,22 @@
         <item>Trending</item>
         <item>Newest</item>
     </string-array>
+
+    <array name="comment_colors">
+        <item>@color/a</item>
+        <item>@color/c</item>
+        <item>@color/m</item>
+        <item>@color/h</item>
+        <item>@color/d</item>
+        <item>@color/b</item>
+        <item>@color/f</item>
+        <item>@color/l</item>
+        <item>@color/g</item>
+        <item>@color/j</item>
+        <item>@color/e</item>
+        <item>@color/k</item>
+        <item>@color/n</item>
+        <item>@color/i</item>
+        <item>@color/o</item>
+    </array>
 </resources>

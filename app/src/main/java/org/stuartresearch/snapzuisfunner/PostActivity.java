@@ -13,15 +13,14 @@ import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrInterface;
+import com.etsy.android.grid.StaggeredGridView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.otto.Subscribe;
 
+import org.parceler.Parcel;
+import org.parceler.Parcels;
 import org.stuartresearch.SnapzuAPI.Comment;
 import org.stuartresearch.SnapzuAPI.Post;
 
@@ -30,14 +29,14 @@ import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 
 
-public class PostActivity extends AppCompatActivity implements View.OnTouchListener, SlidingUpPanelLayout.PanelSlideListener{
+public class PostActivity extends AppCompatActivity implements View.OnTouchListener, SlidingUpPanelLayout.PanelSlideListener {
+
+    public static final String READABILITY = "javascript:(%0A%28function%28%29%7Bwindow.baseUrl%3D%27//www.readability.com%27%3Bwindow.readabilityToken%3D%27%27%3Bvar%20s%3Ddocument.createElement%28%27script%27%29%3Bs.setAttribute%28%27type%27%2C%27text/javascript%27%29%3Bs.setAttribute%28%27charset%27%2C%27UTF-8%27%29%3Bs.setAttribute%28%27src%27%2CbaseUrl%2B%27/bookmarklet/read.js%27%29%3Bdocument.documentElement.appendChild%28s%29%3B%7D%29%28%29)";
 
     @Bind(R.id.post_webview) WebView mWebView;
     @Bind(R.id.post_toolbar) Toolbar toolbar;
-    @Bind(R.id.comment_listview) ListView listView;
+    @Bind(R.id.comment_grid_view) StaggeredGridView gridView;
     @Bind(R.id.sliding_layout) SlidingUpPanelLayout slidingUpPanelLayout;
-
-
 
     Post post;
     Comment[] comments;
@@ -50,12 +49,12 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
     ListAdapter mListAdapter;
 
-    SlidrInterface slidrInterface;
-
     boolean showingComments = false;
 
     String url;
     String cookies;
+
+    boolean isFullScreen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +72,6 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         // slide in
         overridePendingTransition(R.anim.slide_left, 0);
 
-        // Sliding mechanism
-        SlidrConfig config = new SlidrConfig.Builder().sensitivity(0.5f).build();
-        slidrInterface = Slidr.attach(this, config);
-
-
         slidingUpPanelLayout.setPanelSlideListener(this);
 
         // Butterknife does not work with webview?
@@ -85,7 +79,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
         // Prevent sliding
         mWebView.setOnTouchListener(this);
-        listView.setOnTouchListener(this);
+        gridView.setOnTouchListener(this);
 
         // Configure webview
         WebSettings settings = mWebView.getSettings();
@@ -94,14 +88,10 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         settings.setDisplayZoomControls(false);
         mWebView.setWebViewClient(new PostWebClient());
 
-        Intent intent = getIntent();
+        Bundle extras = getIntent().getExtras();
 
-        if (intent.getBooleanExtra("locked", false)) {
-            slidingUpPanelLayout.setEnabled(false);
-        }
-
-        cookies = intent.getStringExtra("cookies");
-        url = intent.getStringExtra("url");
+        cookies = extras.getString("cookies", "");
+        url = extras.getString("url", "");
 
         // Get the right cookies in there
         CookieManager cookieManager = CookieManager.getInstance();
@@ -111,7 +101,9 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
         // Load website
         mWebView.loadUrl(url);
+        post = ((SinglePost) Parcels.unwrap(extras.getParcelable("post"))).post;
 
+        new PopulateComments(post.getCommentsLink()).execute();
 
     }
 
@@ -145,6 +137,19 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         return super.onOptionsItemSelected(item);
     }
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mWebView.onPause();
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        mWebView.onResume();
+    }
+
     public void onWebviewItemSelected(int id) {
         switch (id) {
             case R.id.post_1:
@@ -161,10 +166,10 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
                 startActivity(openInBrowser);
                 break;
             case R.id.post_5:
-                Toast.makeText(this, "Fullscreen is not implemented.", Toast.LENGTH_SHORT).show();
+                toggleFullScreen();
                 break;
             case R.id.post_6:
-                Toast.makeText(this, "Reader is not implemented.", Toast.LENGTH_SHORT).show();
+                mWebView.loadUrl(READABILITY);
                 break;
             case R.id.post_7:
                 Toast.makeText(this, "More is not implemented.", Toast.LENGTH_SHORT).show();
@@ -225,6 +230,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     protected void onDestroy() {
         super.onDestroy();
         MainActivity.bus.unregister(this);
+        mWebView.destroy();
     }
 
     @Override
@@ -241,18 +247,11 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         return false;
     }
 
-    // Sent from MainActivity
-    @Subscribe
-    public void onPostReceive(MainActivity.SinglePostPackage singlePostPackage) {
-        this.post = singlePostPackage.post;
-        new PopulateComments(post.getCommentsLink()).execute();
-    }
-
     @Subscribe
     public void onCommentsReceive(PopulateComments.CommentsPackage commentsPackage) {
         this.comments = commentsPackage.comments;
         mListAdapter = new ListAdapter(this, R.layout.list_item, comments, post);
-        listView.setAdapter(mListAdapter);
+        gridView.setAdapter(mListAdapter);
         mListAdapter.notifyDataSetChanged();
     }
 
@@ -275,14 +274,47 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     // ON COMMENT SELECTED
-    @OnItemClick(R.id.comment_listview)
+    @OnItemClick(R.id.comment_grid_view)
     public void commentSelected(int position) {
         Toast.makeText(this, "Comment selection is not implemented", Toast.LENGTH_SHORT).show();
+    }
+
+    public void toggleFullScreen() {
+        if (isFullScreen) {
+            presentNotfullScreen();
+        } else {
+            presentFullScreen();
+        }
+    }
+
+    public void presentFullScreen() {
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
+        slidingUpPanelLayout.setEnabled(false);
+
+        isFullScreen = true;
+    }
+
+    public void presentNotfullScreen() {
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+
+        slidingUpPanelLayout.setEnabled(true);
+
+        isFullScreen = false;
     }
 
     @Override
     public void onPanelCollapsed(View view) {
         showingComments = false;
+        mWebView.onResume();
         arrowBackUp.setIcon(R.drawable.ic_arrow_back_black_24dp);
         arrowBackUp.setTitle("Back");
         arrowForwardDown.setIcon(R.drawable.ic_arrow_forward_black_24dp);
@@ -291,16 +323,17 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         arrowBackUp.setTitle("Open In Browser");
         fullscreenSearch.setIcon(R.drawable.ic_fullscreen_black_24dp);
         arrowBackUp.setTitle("Fullscreen");
-        readerSort.setIcon(R.drawable.ic_book_black_24dp);
+        readerSort.setIcon(R.drawable.ic_readability_black_24dp);
         arrowBackUp.setTitle("Reader Mode");
     }
 
     @Override
     public void onPanelExpanded(View view) {
         showingComments = true;
-        arrowBackUp.setIcon(R.drawable.ic_keyboard_arrow_up_black_24dp);
+        mWebView.onPause();
+        arrowBackUp.setIcon(R.drawable.ic_arrow_up_black_24dp);
         arrowBackUp.setTitle("Up Vote");
-        arrowForwardDown.setIcon(R.drawable.ic_keyboard_arrow_down_black_24dp);
+        arrowForwardDown.setIcon(R.drawable.ic_arrow_down_black_24dp);
         arrowBackUp.setTitle("Down Vote");
         openInBrowserCompose.setIcon(R.drawable.ic_create_black_24dp);
         arrowBackUp.setTitle("Compose");
@@ -308,6 +341,10 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         arrowBackUp.setTitle("Search");
         readerSort.setIcon(R.drawable.ic_sort_black_24dp);
         arrowBackUp.setTitle("Sort");
+
+        if (isFullScreen) {
+            presentNotfullScreen();
+        }
     }
 
     @Override
@@ -323,5 +360,16 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     public void onPanelSlide(View view, float v) {
 
+    }
+
+    @Parcel
+    public static class SinglePost {
+        Post post;
+
+        public SinglePost() {}
+
+        public SinglePost(Post post) {
+            this.post = post;
+        }
     }
 }

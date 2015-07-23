@@ -4,16 +4,24 @@
     android:layout_width="match_parent">
     <Preference
         android:title="Donate"
-        android:summary="Show your support for Snapzu Is Funner"
+        android:icon="@drawable/ic_credit_card_black_24dp"
+        android:summary="Buy me a beer"
         android:key="setting_donate">
-        <intent android:action="android.intent.action.view"
-            android:targetPackage="org.stuartresearch.snapzuisfunner"
-            android:targetClass="org.stuartresearch.snapzuisfunner.DonationActivity"/>
     </Preference>
+
+    <ListPreference
+        android:title="Font Size"
+        android:summary="Change font sizes throughout Tapzu"
+        android:icon="@drawable/ic_format_size_black_24dp"
+        android:defaultValue="Medium"
+        android:key="setting_font_size"
+        android:entries="@array/font_sizes"
+        android:entryValues="@array/font_sizes" />
 
     <Preference
         android:title="Rate The App"
-        android:summary="Help others discover Snapzu Is Funner"
+        android:summary="Help others discover Tapzu"
+        android:icon="@drawable/ic_stars_black_24dp"
         android:key="setting_rate"
         >
         <intent android:action="android.intent.action.VIEW"
@@ -22,6 +30,7 @@
 
     <Preference
         android:title="Licenses"
-        android:summary="What makes Snapzu Is Funner possible"
+        android:summary="What makes Tapzu possible"
+        android:icon="@drawable/ic_info_outline_black_24dp"
         android:key="setting_license" />
 </PreferenceScreen>

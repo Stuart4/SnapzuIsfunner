@@ -37,8 +37,10 @@
             android:name=".PostActivity"
             android:label="@string/title_activity_post"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/Theme.Slidr.Slidable" >
-            <meta-data
+            android:theme="@style/AppTheme"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize" >
+
+        <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.stuartresearch.snapzuisfunner.MainActivity" />
         </activity>
@@ -49,23 +51,15 @@
         <activity
             android:name=".ActionActivity"
             android:label="@string/title_activity_action"
-            android:theme="@style/Theme.Slidr.Slidable" >
+            android:theme="@style/AppTheme" >
         </activity>
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:theme="@style/Theme.Slidr.Slidable" >
+            android:theme="@style/AppTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.stuartresearch.snapzuisfunner.MainActivity" />
-        </activity>
-        <activity
-            android:name=".DonationActivity"
-            android:label="@string/title_activity_donation"
-            android:theme="@style/Theme.Slidr.Slidable" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.stuartresearch.snapzuisfunner.SettingsActivity" />
         </activity>
     </application>
 

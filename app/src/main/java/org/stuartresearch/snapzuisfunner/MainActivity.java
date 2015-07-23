@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.Glide;
 import com.etsy.android.grid.StaggeredGridView;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -34,10 +35,8 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.otto.Bus;
-import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 import com.squareup.otto.ThreadEnforcer;
-import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 import org.stuartresearch.SnapzuAPI.Post;
@@ -113,18 +112,17 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         refresh.setOnRefreshListener(this);
 
         // Set titles
-        updateTitle();
+        presentTitle();
 
         // Load avatars with Picasso in header
         DrawerImageLoader.init(new DrawerImageLoader.IDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable drawable) {
-                Picasso.with(imageView.getContext()).load(uri).placeholder(R.drawable.profile).into(imageView);
+                Glide.with(imageView.getContext()).load(uri).placeholder(R.drawable.profile).into(imageView);
             }
 
             @Override
             public void cancel(ImageView imageView) {
-                Picasso.with(imageView.getContext()).cancelRequest(imageView);
             }
 
             @Override
@@ -152,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             showTribes(tribes);
         }
         downloadTribes();
+        downloadMessagesAndLevel();
 
         // fill grid with posts
         if (posts.isEmpty()) {
@@ -264,9 +263,9 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
     public void buildDrawerItems() {
         drawerProfile = new PrimaryDrawerItem().withName("Profile").withIcon(R.drawable.ic_account_box_black_18dp).withCheckable(false);
-        drawerMessages =new PrimaryDrawerItem().withName("Messages").withIcon(R.drawable.ic_message_black_18dp).withCheckable(false);
-        drawerOpenUser =new PrimaryDrawerItem().withName("Open User").withIcon(R.drawable.ic_group_black_18dp).withCheckable(false);
-        drawerOpenTribe =new PrimaryDrawerItem().withName("Open Tribe").withIcon(R.drawable.ic_filter_tilt_shift_black_18dp).withCheckable(false);
+        drawerMessages = new PrimaryDrawerItem().withName("Messages").withIcon(R.drawable.ic_message_black_18dp).withCheckable(false);
+        drawerOpenUser = new PrimaryDrawerItem().withName("Open User").withIcon(R.drawable.ic_group_black_18dp).withCheckable(false);
+        drawerOpenTribe = new PrimaryDrawerItem().withName("Open Tribe").withIcon(R.drawable.ic_filter_tilt_shift_black_18dp).withCheckable(false);
         drawerDivider = new DividerDrawerItem();
         drawerSettings = new PrimaryDrawerItem().withName("Settings").withIcon(R.drawable.ic_settings_black_18dp).withCheckable(false);
 
@@ -364,6 +363,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show();
                 clearTribes();
                 downloadTribes();
+                presentMessageCount("");
+                presentProfileLevel("");
                 break;
             case -2:
                 // ADD ACCOUNT
@@ -391,6 +392,9 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 Toast.makeText(this, String.format("Logged in as %s", profile.getName()), Toast.LENGTH_SHORT).show();
                 clearTribes();
                 downloadTribes();
+                downloadMessagesAndLevel();
+                presentMessageCount("");
+                presentProfileLevel("");
                 break;
         }
 
@@ -411,6 +415,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         if (profile != null) {
             i.putExtra("cookies", profile.cookies);
         }
+        i.putExtra("post", Parcels.wrap(new PostActivity.SinglePost(post)));
         startActivity(i);
     }
 
@@ -424,6 +429,15 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             }
         } else {
             new PopulatePosts(tribe, sorting, Integer.toString(page++)).execute();
+        }
+    }
+
+    private void downloadMessagesAndLevel() {
+        if (profile != null) {
+            new PopulateMessagesAndLevel(profile.getCookies()).execute();
+        } else {
+            presentMessageCount("");
+            presentProfileLevel("");
         }
     }
 
@@ -448,7 +462,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         hideCards();
         downloadPosts();
 
-        updateTitle();
+        presentTitle();
     }
 
     public void hideCards() {
@@ -476,11 +490,22 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             this.posts.add(posts[i]);
         }
 
+
+
+        if (tribe.getName().equals("all")) {
+            mAdapter.removeTribe();
+        } else {
+            mAdapter.setTribe(tribe.getName());
+        }
+
         mAdapter.notifyDataSetChanged();
         gridView.setVisibility(View.VISIBLE);
 
         refresh.setRefreshing(false);
-        endlessScrollListener = new EndlessScrollListener();
+        if (posts.length > 5) {
+            endlessScrollListener = new EndlessScrollListener();
+
+        }
         gridView.setOnScrollListener(endlessScrollListener);
     }
 
@@ -496,6 +521,17 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     public void onTribesReady(PopulateTribes.TribesPackage tribesPackage) {
         clearTribes();
         showTribes(tribesPackage.tribes);
+    }
+
+    @Subscribe
+    public void onMessagesAndLevelReady(PopulateMessagesAndLevel.MessagesAndLevelPackage messagesAndLevelPackage) {
+        presentProfileLevel(messagesAndLevelPackage.data[0]);
+        presentMessageCount(messagesAndLevelPackage.data[1]);
+    }
+
+    @Subscribe
+    public void onMessagesAndLevelError(PopulateMessagesAndLevel.MessagesAndLevelError messagesAndLevelError) {
+        Toast.makeText(this, "Network errors not implemented", Toast.LENGTH_SHORT).show();
     }
 
     public void showTribes(Tribe[] tribes) {
@@ -522,23 +558,23 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         Toast.makeText(this, "Network errors not implemented", Toast.LENGTH_SHORT).show();
     }
 
-    public void updateTitle() {
+    public void presentTitle() {
         getSupportActionBar().setTitle(tribe.getName().toUpperCase());
         getSupportActionBar().setSubtitle(this.sorting.substring(1));
     }
 
-    public static class SinglePostPackage {
-        public final Post post;
-
-        public SinglePostPackage(Post post) {
-            this.post = post;
-        }
+    public void presentMessageCount(String count) {
+        drawerMessages.setBadge(count);
+        drawer.removeItem(1);
+        drawer.addItem(drawerMessages, 1);
     }
 
-    @Produce
-    public SinglePostPackage produceSinglePostPackage() {
-        return new SinglePostPackage(this.post);
+    public void presentProfileLevel(String level) {
+        drawerProfile.setBadge(level);
+        drawer.removeItem(0);
+        drawer.addItem(drawerProfile, 0);
     }
+
 
     @Subscribe
     public void onLoadMoreRequest(EndlessScrollListener.LoadMorePackage loadMorePackage) {
@@ -556,7 +592,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                     } else if (i == 1) {
                         sorting = "/new";
                     }
-                    updateTitle();
+                    presentTitle();
                     refresh.setRefreshing(true);
                     endlessScrollListener.setLoading(true);
                     hideCards();
@@ -574,7 +610,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                     } else {
                         sorting = "/topscores";
                     }
-                    updateTitle();
+                    presentTitle();
                     refresh.setRefreshing(true);
                     endlessScrollListener.setLoading(true);
                     hideCards();
@@ -622,6 +658,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         return new DrawerBuilder().withActivity(this).withTranslucentStatusBar(false)
                 .withActionBarDrawerToggle(true)
                 .withToolbar(toolbar)
+                .withTranslucentStatusBarProgrammatically(true)
                 .withAccountHeader(accountHeader)
                 .withSelectedItem(drawerSelection)
                 .addDrawerItems(drawerProfile, drawerMessages, drawerOpenUser, drawerOpenTribe, drawerDivider)

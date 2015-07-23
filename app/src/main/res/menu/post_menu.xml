@@ -19,7 +19,7 @@
         android:orderInCategory="5" app:showAsAction="always" android:icon="@drawable/ic_fullscreen_black_24dp"/>
 
     <item android:id="@+id/post_6" android:title="Reader Mode"
-        android:orderInCategory="6" app:showAsAction="always" android:icon="@drawable/ic_book_black_24dp"/>
+        android:orderInCategory="6" app:showAsAction="always" android:icon="@drawable/ic_readability_black_24dp"/>
 
     <item android:id="@+id/post_7" android:title="More"
         android:orderInCategory="100" app:showAsAction="always" android:icon="@drawable/ic_more_vert_black_24dp"/>

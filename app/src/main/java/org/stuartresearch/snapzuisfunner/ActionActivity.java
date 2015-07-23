@@ -15,10 +15,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrInterface;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -34,7 +30,6 @@ public class ActionActivity extends ActionBarActivity implements View.OnTouchLis
     MenuItem fullscreenSearch;
     MenuItem readerSort;
 
-    SlidrInterface slidrInterface;
 
 
     @Override
@@ -47,11 +42,6 @@ public class ActionActivity extends ActionBarActivity implements View.OnTouchLis
 
         getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
-
-        // Sliding mechanism
-        SlidrConfig config = new SlidrConfig.Builder().sensitivity(0.5f).build();
-        slidrInterface = Slidr.attach(this, config);
-
 
         mWebView = (WebView) findViewById(R.id.post_webview);
 
@@ -98,6 +88,25 @@ public class ActionActivity extends ActionBarActivity implements View.OnTouchLis
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(0, R.anim.slide_right);
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mWebView.onPause();
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        mWebView.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mWebView.destroy();
     }
 
     @Override

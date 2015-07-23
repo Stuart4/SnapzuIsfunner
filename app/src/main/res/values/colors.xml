@@ -9,4 +9,21 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
 
+    <color name="a">#ff1744</color>
+    <color name="b">#f50057</color>
+    <color name="c">#d500f9</color>
+    <color name="d">#651fff</color>
+    <color name="e">#3d5afe</color>
+    <color name="f">#2979ff</color>
+    <color name="g">#00b0ff</color>
+    <color name="h">#00e5ff</color>
+    <color name="i">#1de9b6</color>
+    <color name="j">#00e676</color>
+    <color name="k">#76ff03</color>
+    <color name="l">#c6ff00</color>
+    <color name="m">#ffc400</color>
+    <color name="n">#ff9100</color>
+    <color name="o">#ff3d00</color>
+
+
 </resources>
