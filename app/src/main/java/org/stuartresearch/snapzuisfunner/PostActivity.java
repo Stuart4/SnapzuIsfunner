@@ -294,9 +294,9 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     public void onPanelExpanded(View view) {
         showingComments = true;
         mWebView.onPause();
-        arrowBackUp.setIcon(R.drawable.ic_keyboard_arrow_up_black_24dp);
+        arrowBackUp.setIcon(R.drawable.ic_arrow_up_black_24dp);
         arrowBackUp.setTitle("Up Vote");
-        arrowForwardDown.setIcon(R.drawable.ic_keyboard_arrow_down_black_24dp);
+        arrowForwardDown.setIcon(R.drawable.ic_arrow_down_black_24dp);
         arrowBackUp.setTitle("Down Vote");
         openInBrowserCompose.setIcon(R.drawable.ic_create_black_24dp);
         arrowBackUp.setTitle("Compose");
