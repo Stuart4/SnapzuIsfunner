@@ -297,12 +297,16 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
+        slidingUpPanelLayout.setEnabled(false);
+
         isFullScreen = true;
     }
 
     public void presentNotfullScreen() {
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+
+        slidingUpPanelLayout.setEnabled(true);
 
         isFullScreen = false;
     }

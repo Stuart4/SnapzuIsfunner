@@ -123,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
             @Override
             public void cancel(ImageView imageView) {
-                Glide.clear(imageView);
             }
 
             @Override
