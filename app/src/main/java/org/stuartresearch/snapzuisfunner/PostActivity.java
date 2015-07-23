@@ -29,7 +29,9 @@ import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 
 
-public class PostActivity extends AppCompatActivity implements View.OnTouchListener, SlidingUpPanelLayout.PanelSlideListener{
+public class PostActivity extends AppCompatActivity implements View.OnTouchListener, SlidingUpPanelLayout.PanelSlideListener {
+
+    public static final String READABILITY = "javascript:(%0A%28function%28%29%7Bwindow.baseUrl%3D%27//www.readability.com%27%3Bwindow.readabilityToken%3D%27%27%3Bvar%20s%3Ddocument.createElement%28%27script%27%29%3Bs.setAttribute%28%27type%27%2C%27text/javascript%27%29%3Bs.setAttribute%28%27charset%27%2C%27UTF-8%27%29%3Bs.setAttribute%28%27src%27%2CbaseUrl%2B%27/bookmarklet/read.js%27%29%3Bdocument.documentElement.appendChild%28s%29%3B%7D%29%28%29)";
 
     @Bind(R.id.post_webview) WebView mWebView;
     @Bind(R.id.post_toolbar) Toolbar toolbar;
@@ -164,7 +166,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
                 Toast.makeText(this, "Fullscreen is not implemented.", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.post_6:
-                Toast.makeText(this, "Reader is not implemented.", Toast.LENGTH_SHORT).show();
+                mWebView.loadUrl(READABILITY);
                 break;
             case R.id.post_7:
                 Toast.makeText(this, "More is not implemented.", Toast.LENGTH_SHORT).show();
@@ -286,7 +288,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         arrowBackUp.setTitle("Open In Browser");
         fullscreenSearch.setIcon(R.drawable.ic_fullscreen_black_24dp);
         arrowBackUp.setTitle("Fullscreen");
-        readerSort.setIcon(R.drawable.ic_book_black_24dp);
+        readerSort.setIcon(R.drawable.ic_readability_black_24dp);
         arrowBackUp.setTitle("Reader Mode");
     }
 
