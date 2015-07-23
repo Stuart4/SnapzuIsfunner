@@ -54,6 +54,8 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     String url;
     String cookies;
 
+    boolean isFullScreen = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,6 +137,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -163,7 +166,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
                 startActivity(openInBrowser);
                 break;
             case R.id.post_5:
-                Toast.makeText(this, "Fullscreen is not implemented.", Toast.LENGTH_SHORT).show();
+                toggleFullScreen();
                 break;
             case R.id.post_6:
                 mWebView.loadUrl(READABILITY);
@@ -276,6 +279,34 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         Toast.makeText(this, "Comment selection is not implemented", Toast.LENGTH_SHORT).show();
     }
 
+    public void toggleFullScreen() {
+        if (isFullScreen) {
+            presentNotfullScreen();
+        } else {
+            presentFullScreen();
+        }
+    }
+
+    public void presentFullScreen() {
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
+        isFullScreen = true;
+    }
+
+    public void presentNotfullScreen() {
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+
+        isFullScreen = false;
+    }
+
     @Override
     public void onPanelCollapsed(View view) {
         showingComments = false;
@@ -306,6 +337,10 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         arrowBackUp.setTitle("Search");
         readerSort.setIcon(R.drawable.ic_sort_black_24dp);
         arrowBackUp.setTitle("Sort");
+
+        if (isFullScreen) {
+            presentNotfullScreen();
+        }
     }
 
     @Override
