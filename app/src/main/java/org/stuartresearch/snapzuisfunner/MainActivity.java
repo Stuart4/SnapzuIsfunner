@@ -62,6 +62,10 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     public static final String PREF_PROFILE_ID = "profile_id";
 
     public static final int LOGIN_REQUEST = 1;
+    public static final String SORTING_TRENDING = "/trending";
+    public static final String SORTING_NEW = "/new";
+    public static final String SORTING_NEWEST = "/newest";
+    public static final String SORTING_TOPSCORES = "/topscores";
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.grid_view) StaggeredGridView gridView;
@@ -78,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     //ATTN: HAS TO BE STATIC - Don't ask me why.
     static ArrayList<Post> posts = new ArrayList<>(50);
 
-    @Icicle String sorting = "/trending";
+    @Icicle String sorting = SORTING_TRENDING;
     @Icicle Tribe tribe = new Tribe("all", "http://snapzu.com/list");
     Post post;
     @Icicle int page = 1;
@@ -458,7 +462,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     private void tribeSelected(Tribe tribe) {
         refresh.setRefreshing(true);
         this.tribe = tribe;
-        this.sorting = "/trending";
+        this.sorting = SORTING_TRENDING;
         if (endlessScrollListener != null)
             endlessScrollListener.setLoading(true);
         hideCards();
@@ -597,14 +601,14 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         int checkedItem;
         switch (sorting) {
             default:
-            case "/trending":
+            case SORTING_TRENDING:
                 checkedItem = 0;
                 break;
-            case "/newest":
-            case "/new":
+            case SORTING_NEWEST:
+            case SORTING_NEW:
                 checkedItem = 1;
                 break;
-            case "/topscores":
+            case SORTING_TOPSCORES:
                 checkedItem = 2;
                 break;
         }
@@ -614,23 +618,23 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 if (itemsId == R.array.sorting_all) {
                     switch (which) {
                         case 0:
-                            sorting = "/trending";
+                            sorting = SORTING_TRENDING;
                             break;
                         case 1:
-                            sorting = "/new";
+                            sorting = SORTING_NEW;
                             break;
                     }
 
                 } else {
                     switch (which) {
                         case 0:
-                            sorting = "/trending";
+                            sorting = SORTING_TRENDING;
                             break;
                         case 1:
-                            sorting = "/newest";
+                            sorting = SORTING_NEWEST;
                             break;
                         case 2:
-                            sorting = "/topscores";
+                            sorting = SORTING_TOPSCORES;
                             break;
                     }
                 }
