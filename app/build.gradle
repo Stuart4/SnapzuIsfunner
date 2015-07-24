@@ -54,8 +54,6 @@ dependencies {
     provided 'frankiesardo:icepick-processor:3.0.2'
     // SWIPE UP PANEL
     compile 'com.sothree.slidinguppanel:library:3.1.0'
-    // DIALOGS
-    compile 'com.afollestad:material-dialogs:0.7.6.0'
     // SQLITE CRUD OPERATIONS
     compile 'com.github.satyan:sugar:1.3.1'
     // MAKE BUNDLES
@@ -65,8 +63,6 @@ dependencies {
     compile('com.mikepenz:materialdrawer:3.1.2@aar') {
         transitive = true
     }
-    // MATERIAL SETTINGS
-    compile 'com.github.kenumir:MaterialSettings:v.1.2.2'
     // DONATIONS
     compile 'com.anjlab.android.iab.v3:library:1.0.+@aar'
     // CIRCULAR IMAGEVIEW
@@ -75,6 +71,10 @@ dependencies {
     compile 'com.github.traex.rippleeffect:library:1.3'
     // REACTIVE EXTENSIONS
     compile 'io.reactivex:rxandroid:0.25.0'
+    // REST API
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    // TREEVIEW
+    compile 'com.github.bmelnychuk:atv:1.2.+'
 
     compile files('libs/SnapzuAPI.jar')
 }
