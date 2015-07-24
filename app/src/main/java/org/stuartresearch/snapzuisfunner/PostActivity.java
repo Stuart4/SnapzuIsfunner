@@ -379,11 +379,11 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
         builder.setTitle("Find In Comments");
 
-        builder.setPositiveButton("Search", (dialog, which) -> {
+        builder.setPositiveButton("SEARCH", (dialog, which) -> {
             onSearchTerm(searchText.getText().toString());
         });
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> {
+        builder.setNegativeButton("CANCEL", (dialog, which) -> {
             dialog.dismiss();
         });
 

@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.etsy.android.grid.StaggeredGridView;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -337,13 +336,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         switch (iProfile.getIdentifier()) {
             case -1:
                 //LOGGED OUT
-                this.profile = null;
-                this.iProfile = null;
-                Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show();
-                clearTribes();
-                downloadTribes();
-                presentMessageCount("");
-                presentProfileLevel("");
+                onLoggedOut();
                 break;
             case -2:
                 // ADD ACCOUNT
@@ -352,17 +345,11 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 break;
             case -3:
                 // MANAGE ACCOUNTS
-                new MaterialDialog.Builder(this).title("Delete All Accounts")
-                        .content("All saved accounts will be deleted.")
-                        .positiveText("DELETE")
-                        .negativeText("CANCEL")
-                        .callback(new MaterialDialog.ButtonCallback() {
-                            @Override
-                            public void onPositive(MaterialDialog dialog) {
-                                super.onPositive(dialog);
-                                MainActivity.bus.post(new MainActivity.DeleteProfiles());
-                            }
-                        }).show();
+                new AlertDialog.Builder(this).setTitle("Delete All Accounts?")
+                        .setPositiveButton("DELETE", (dialog, which) -> {
+                            MainActivity.bus.post(new MainActivity.DeleteProfiles());
+                        })
+                        .setNegativeButton("CANCEL", null).show();
                 break;
             default:
                 // ACCOUNT SELECTED
@@ -382,6 +369,16 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
         //false if you have not consumed the event and it should close the drawer
         return false;
+    }
+
+    public void onLoggedOut() {
+        this.profile = null;
+        this.iProfile = null;
+        Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show();
+        clearTribes();
+        downloadTribes();
+        presentMessageCount("");
+        presentProfileLevel("");
     }
 
 
@@ -633,7 +630,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
         builder.setTitle("Open User");
 
-        builder.setPositiveButton("View", (dialog, which) -> {
+        builder.setPositiveButton("VIEW", (dialog, which) -> {
             String user = userText.getText().toString();
             if (user.isEmpty()) {
                 user = getString(R.string.example_user);
@@ -641,7 +638,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             onOpenUser(user);
         });
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> {
+        builder.setNegativeButton("CANCEL", (dialog, which) -> {
             dialog.dismiss();
         });
 
@@ -664,7 +661,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
         builder.setTitle("Open Tribe");
 
-        builder.setPositiveButton("View", (dialog, which) -> {
+        builder.setPositiveButton("VIEW", (dialog, which) -> {
             String tribe1 = tribeText.getText().toString();
             if (tribe1.isEmpty()) {
                 tribe1 = getString(R.string.example_tribe);
@@ -673,7 +670,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             drawer.setSelectionByIdentifier(-12, false);
         });
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> {
+        builder.setNegativeButton("CANCEL", (dialog, which) -> {
             dialog.dismiss();
         });
 
@@ -796,6 +793,8 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         if (accountHeader.isSelectionListShown()) {
             accountHeader.toggleSelectionList(this);
         }
+
+        onLoggedOut();
     }
 
 }
