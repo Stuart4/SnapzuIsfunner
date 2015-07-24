@@ -2,7 +2,6 @@ package org.stuartresearch.snapzuisfunner;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -177,12 +176,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
             // Receive updates from other components
 
             // bug 77712
-            refresh.post(new Runnable() {
-                @Override
-                public void run() {
-                    refresh.setRefreshing(true);
-                }
-            });
+            refresh.post(() -> refresh.setRefreshing(true));
 
             // Fill posts
         } else {
@@ -591,41 +585,38 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 checkedItem = 2;
                 break;
         }
-        builder.setSingleChoiceItems(itemsId, checkedItem, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (itemsId == R.array.sorting_all) {
-                    switch (which) {
-                        case 0:
-                            sorting = SORTING_TRENDING;
-                            break;
-                        case 1:
-                            sorting = SORTING_NEW;
-                            break;
-                    }
-
-                } else {
-                    switch (which) {
-                        case 0:
-                            sorting = SORTING_TRENDING;
-                            break;
-                        case 1:
-                            sorting = SORTING_NEWEST;
-                            break;
-                        case 2:
-                            sorting = SORTING_TOPSCORES;
-                            break;
-                    }
+        builder.setSingleChoiceItems(itemsId, checkedItem, (dialog, which) -> {
+            if (itemsId == R.array.sorting_all) {
+                switch (which) {
+                    case 0:
+                        sorting = SORTING_TRENDING;
+                        break;
+                    case 1:
+                        sorting = SORTING_NEW;
+                        break;
                 }
 
-                dialog.dismiss();
-
-                presentTitle();
-                refresh.setRefreshing(true);
-                endlessScrollListener.setLoading(true);
-                hideCards();
-                downloadPosts();
+            } else {
+                switch (which) {
+                    case 0:
+                        sorting = SORTING_TRENDING;
+                        break;
+                    case 1:
+                        sorting = SORTING_NEWEST;
+                        break;
+                    case 2:
+                        sorting = SORTING_TOPSCORES;
+                        break;
+                }
             }
+
+            dialog.dismiss();
+
+            presentTitle();
+            refresh.setRefreshing(true);
+            endlessScrollListener.setLoading(true);
+            hideCards();
+            downloadPosts();
         });
 
         builder.show();
@@ -642,22 +633,16 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
         builder.setTitle("Open User");
 
-        builder.setPositiveButton("View", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String user = userText.getText().toString();
-                if (user.isEmpty()) {
-                    user = getString(R.string.example_user);
-                }
-                onOpenUser(user);
+        builder.setPositiveButton("View", (dialog, which) -> {
+            String user = userText.getText().toString();
+            if (user.isEmpty()) {
+                user = getString(R.string.example_user);
             }
+            onOpenUser(user);
         });
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setNegativeButton("Cancel", (dialog, which) -> {
+            dialog.dismiss();
         });
 
         builder.show();
@@ -679,23 +664,17 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
         builder.setTitle("Open Tribe");
 
-        builder.setPositiveButton("View", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String tribe = tribeText.getText().toString();
-                if (tribe.isEmpty()) {
-                    tribe = getString(R.string.example_tribe);
-                }
-                tribeSelected(new Tribe(tribe, address + "/t/" + tribe));
-                drawer.setSelectionByIdentifier(-12, false);
+        builder.setPositiveButton("View", (dialog, which) -> {
+            String tribe1 = tribeText.getText().toString();
+            if (tribe1.isEmpty()) {
+                tribe1 = getString(R.string.example_tribe);
             }
+            tribeSelected(new Tribe(tribe1, address + "/t/" + tribe1));
+            drawer.setSelectionByIdentifier(-12, false);
         });
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setNegativeButton("Cancel", (dialog, which) -> {
+            dialog.dismiss();
         });
 
         builder.show();

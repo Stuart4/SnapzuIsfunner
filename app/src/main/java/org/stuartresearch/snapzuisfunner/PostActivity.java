@@ -1,7 +1,6 @@
 package org.stuartresearch.snapzuisfunner;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,6 +30,10 @@ import org.stuartresearch.SnapzuAPI.Post;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 
 public class PostActivity extends AppCompatActivity implements View.OnTouchListener, SlidingUpPanelLayout.PanelSlideListener {
@@ -376,25 +379,24 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
         builder.setTitle("Find In Comments");
 
-        builder.setPositiveButton("Search", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                onSearchTerm(searchText.getText().toString());
-            }
+        builder.setPositiveButton("Search", (dialog, which) -> {
+            onSearchTerm(searchText.getText().toString());
         });
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setNegativeButton("Cancel", (dialog, which) -> {
+            dialog.dismiss();
         });
 
         builder.show();
     }
 
     public void onSearchTerm(String term) {
-        Toast.makeText(this, "searching for " + term, Toast.LENGTH_SHORT).show();
+        Observable ob = SearchComments.findInComments(comments, term.split(" "));
+        ob = ob.subscribeOn(Schedulers.newThread());
+        ob = ob.observeOn(AndroidSchedulers.mainThread());
+        ob.subscribe((Action1) (Object o) -> {
+            Toast.makeText(getApplicationContext(), Integer.toString((int) o), Toast.LENGTH_LONG).show();
+        });
     }
 
     @Parcel
