@@ -13,4 +13,7 @@
     <string name="title_activity_donation">DonationActivity</string>
 
     <string name="search_comments">Search Comments</string>
+    <string name="example_user">SubZeroJake</string>
+    <string name="example_tribe">android</string>
+
 </resources>

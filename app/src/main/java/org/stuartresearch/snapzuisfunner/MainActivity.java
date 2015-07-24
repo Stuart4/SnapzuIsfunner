@@ -11,12 +11,13 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -209,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort) {
-            showSortingDialog();
+            presentSortingDialog();
             return true;
         } else if (id == R.id.action_compose) {
             if (profile == null) {
@@ -312,33 +313,11 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
                 break;
             // Open User
             case 2:
-                new MaterialDialog.Builder(this)
-                        .title("Open User")
-                        .content("Enter user's name.")
-                        .inputType(InputType.TYPE_CLASS_TEXT)
-                        .positiveText("GO")
-                        .input("SubZeroJake", "", false, new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(MaterialDialog dialog, CharSequence input) {
-                                Intent intent = new Intent(getApplicationContext(), ActionActivity.class);
-                                intent.putExtra("url", address + profile.getName());
-                                startActivity(intent);
-                            }
-                        }).show();
+                presentOpenUserDialog();
                 break;
             // Open Tribe
             case 3:
-                new MaterialDialog.Builder(this)
-                        .title("Open Tribe")
-                        .content("Enter tribe's name.")
-                        .inputType(InputType.TYPE_CLASS_TEXT)
-                        .positiveText("GO")
-                        .input("android", "", false, new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(MaterialDialog dialog, CharSequence input) {
-                                tribeSelected(new Tribe(input.toString(), address + "/t/" + input));
-                            }
-                        }).show();
+                presentOpenTribeDialog();
                 break;
             // Settings
             case -1:
@@ -588,7 +567,7 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         downloadPosts();
     }
 
-    public void showSortingDialog() {
+    public void presentSortingDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Sorting");
         final int itemsId;
@@ -652,6 +631,77 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
         builder.show();
 
     }
+
+    public void presentOpenUserDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_open_user, null);
+        final TextView userText = (TextView) view.findViewById(R.id.open_user_text);
+
+        builder.setView(view);
+
+        builder.setTitle("Open User");
+
+        builder.setPositiveButton("View", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String user = userText.getText().toString();
+                if (user.isEmpty()) {
+                    user = getString(R.string.example_user);
+                }
+                onOpenUser(user);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.show();
+    }
+
+    public void onOpenUser(String user) {
+        Intent intent = new Intent(getApplicationContext(), ActionActivity.class);
+        intent.putExtra("url", address + user);
+        startActivity(intent);
+    }
+
+    public void presentOpenTribeDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_open_tribe, null);
+        final TextView tribeText = (TextView) view.findViewById(R.id.open_tribe_text);
+
+        builder.setView(view);
+
+        builder.setTitle("Open Tribe");
+
+        builder.setPositiveButton("View", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String tribe = tribeText.getText().toString();
+                if (tribe.isEmpty()) {
+                    tribe = getString(R.string.example_tribe);
+                }
+                tribeSelected(new Tribe(tribe, address + "/t/" + tribe));
+                drawer.setSelectionByIdentifier(-12, false);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.show();
+    }
+
+
 
     public AccountHeader generateAccounterHeader(Bundle savedInstanceState, int selectedID) {
         AccountHeaderBuilder headerBuilder = new AccountHeaderBuilder()
