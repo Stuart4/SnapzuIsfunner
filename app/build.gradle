@@ -104,3 +104,11 @@ android {
     }
 }
 
+retrolambda {
+    jdk "/usr/lib/jvm/java-8-oracle"
+    oldJdk "/usr/lib/jvm/java-7-openjdk-amd64"
+    javaVersion JavaVersion.VERSION_1_7
+    defaultMethods false
+    incremental true
+}
+
