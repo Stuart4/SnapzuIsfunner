@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="sorting">
-        <item>Trending</item>
-        <item>Newest</item>
-        <item>Top Scores</item>
-    </string-array>
-    <string-array name="all_sorting">
-        <item>Trending</item>
-        <item>Newest</item>
-    </string-array>
-
     <array name="comment_colors">
         <item>@color/a</item>
         <item>@color/c</item>
@@ -27,4 +17,15 @@
         <item>@color/n</item>
         <item>@color/i</item>
     </array>
+
+    <string-array name="sorting_all">
+        <item>Trending</item>
+        <item>Newest</item>
+    </string-array>
+
+    <string-array name="sorting_other">
+        <item>Trending</item>
+        <item>Newest</item>
+        <item>Top Scores</item>
+    </string-array>
 </resources>

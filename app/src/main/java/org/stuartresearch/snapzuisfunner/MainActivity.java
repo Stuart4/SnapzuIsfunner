@@ -1,6 +1,8 @@
 package org.stuartresearch.snapzuisfunner;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -583,41 +585,68 @@ public class MainActivity extends AppCompatActivity implements Drawer.OnDrawerIt
     }
 
     public void showSortingDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Sorting");
+        final int itemsId;
         if (tribe.getName().equals("all")) {
-            new MaterialDialog.Builder(this).title("Sorting").items(R.array.all_sorting).itemsCallback(new MaterialDialog.ListCallback() {
-                @Override
-                public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                    if (i == 0) {
-                        sorting = "/trending";
-                    } else if (i == 1) {
-                        sorting = "/new";
-                    }
-                    presentTitle();
-                    refresh.setRefreshing(true);
-                    endlessScrollListener.setLoading(true);
-                    hideCards();
-                    downloadPosts();
-                }
-            }).show();
+            itemsId = R.array.sorting_all;
         } else {
-            new MaterialDialog.Builder(this).title("Sorting").items(R.array.sorting).itemsCallback(new MaterialDialog.ListCallback() {
-                @Override
-                public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                    if (i == 0) {
-                        sorting = "/trending";
-                    } else if (i == 1) {
-                        sorting = "/newest";
-                    } else {
-                        sorting = "/topscores";
-                    }
-                    presentTitle();
-                    refresh.setRefreshing(true);
-                    endlessScrollListener.setLoading(true);
-                    hideCards();
-                    downloadPosts();
-                }
-            }).show();
+            itemsId = R.array.sorting_other;
         }
+
+        int checkedItem;
+        switch (sorting) {
+            default:
+            case "/trending":
+                checkedItem = 0;
+                break;
+            case "/newest":
+            case "/new":
+                checkedItem = 1;
+                break;
+            case "/topscores":
+                checkedItem = 2;
+                break;
+        }
+        builder.setSingleChoiceItems(itemsId, checkedItem, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (itemsId == R.array.sorting_all) {
+                    switch (which) {
+                        case 0:
+                            sorting = "/trending";
+                            break;
+                        case 1:
+                            sorting = "/new";
+                            break;
+                    }
+
+                } else {
+                    switch (which) {
+                        case 0:
+                            sorting = "/trending";
+                            break;
+                        case 1:
+                            sorting = "/newest";
+                            break;
+                        case 2:
+                            sorting = "/topscores";
+                            break;
+                    }
+                }
+
+                dialog.dismiss();
+
+                presentTitle();
+                refresh.setRefreshing(true);
+                endlessScrollListener.setLoading(true);
+                hideCards();
+                downloadPosts();
+            }
+        });
+
+        builder.show();
+
     }
 
     public AccountHeader generateAccounterHeader(Bundle savedInstanceState, int selectedID) {
