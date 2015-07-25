@@ -2,8 +2,10 @@ package org.stuartresearch.snapzuisfunner;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -39,6 +41,9 @@ import rx.schedulers.Schedulers;
 public class PostActivity extends AppCompatActivity implements View.OnTouchListener, SlidingUpPanelLayout.PanelSlideListener {
 
     public static final String READABILITY = "javascript:(%0A%28function%28%29%7Bwindow.baseUrl%3D%27//www.readability.com%27%3Bwindow.readabilityToken%3D%27%27%3Bvar%20s%3Ddocument.createElement%28%27script%27%29%3Bs.setAttribute%28%27type%27%2C%27text/javascript%27%29%3Bs.setAttribute%28%27charset%27%2C%27UTF-8%27%29%3Bs.setAttribute%28%27src%27%2CbaseUrl%2B%27/bookmarklet/read.js%27%29%3Bdocument.documentElement.appendChild%28s%29%3B%7D%29%28%29)";
+
+    public static final String SETTINGS_COLLAPSE_ALL = "setting_collapse_all";
+
 
     @Bind(R.id.post_webview) WebView mWebView;
     @Bind(R.id.post_toolbar) Toolbar toolbar;
@@ -84,7 +89,6 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
         // Prevent sliding
         mWebView.setOnTouchListener(this);
-        commentContainer.setOnTouchListener(this);
 
         // Configure webview
         WebSettings settings = mWebView.getSettings();
@@ -408,6 +412,19 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     public void presentComments() {
         AndroidTreeView treeView = TreeViewConfiguration.buildTreeView(this, post, comments);
         commentContainer.addView(treeView.getView());
-        treeView.expandAll();
+        treeView.setDefaultAnimation(false);
+
+        if (getCollapseSettings()) {
+            treeView.collapseAll();
+        } else {
+            treeView.expandAll();
+        }
+    }
+
+    public boolean getCollapseSettings() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        return prefs.getBoolean(SETTINGS_COLLAPSE_ALL, false);
+
     }
 }
