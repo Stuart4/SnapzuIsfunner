@@ -15,12 +15,13 @@ import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.etsy.android.grid.StaggeredGridView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.otto.Subscribe;
+import com.unnamed.b.atv.view.AndroidTreeView;
 
 import org.parceler.Parcel;
 import org.parceler.Parcels;
@@ -29,7 +30,6 @@ import org.stuartresearch.SnapzuAPI.Post;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnItemClick;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -42,7 +42,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Bind(R.id.post_webview) WebView mWebView;
     @Bind(R.id.post_toolbar) Toolbar toolbar;
-    @Bind(R.id.comment_grid_view) StaggeredGridView gridView;
+    @Bind(R.id.comment_container) FrameLayout commentContainer;
     @Bind(R.id.sliding_layout) SlidingUpPanelLayout slidingUpPanelLayout;
 
     Post post;
@@ -53,8 +53,6 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     MenuItem openInBrowserCompose;
     MenuItem fullscreenSearch;
     MenuItem readerSort;
-
-    ListAdapter mListAdapter;
 
     boolean showingComments = false;
 
@@ -86,7 +84,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
         // Prevent sliding
         mWebView.setOnTouchListener(this);
-        gridView.setOnTouchListener(this);
+        commentContainer.setOnTouchListener(this);
 
         // Configure webview
         WebSettings settings = mWebView.getSettings();
@@ -106,9 +104,11 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         cookieManager.removeAllCookie();
         cookieManager.setCookie(MainActivity.address, cookies);
 
+
         // Load website
         mWebView.loadUrl(url);
         post = ((SinglePost) Parcels.unwrap(extras.getParcelable("post"))).post;
+
 
         new PopulateComments(post.getCommentsLink()).execute();
 
@@ -257,9 +257,9 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     @Subscribe
     public void onCommentsReceive(PopulateComments.CommentsPackage commentsPackage) {
         this.comments = commentsPackage.comments;
-        mListAdapter = new ListAdapter(this, R.layout.list_item, comments, post);
-        gridView.setAdapter(mListAdapter);
-        mListAdapter.notifyDataSetChanged();
+
+        //Treeview
+        presentComments();
     }
 
     @Subscribe
@@ -280,11 +280,6 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         }
     }
 
-    // ON COMMENT SELECTED
-    @OnItemClick(R.id.comment_grid_view)
-    public void commentSelected(int position) {
-        Toast.makeText(this, "Comment selection is not implemented", Toast.LENGTH_SHORT).show();
-    }
 
     public void toggleFullScreen() {
         if (isFullScreen) {
@@ -408,5 +403,11 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         public SinglePost(Post post) {
             this.post = post;
         }
+    }
+
+    public void presentComments() {
+        AndroidTreeView treeView = TreeViewConfiguration.buildTreeView(this, post, comments);
+        commentContainer.addView(treeView.getView());
+        treeView.expandAll();
     }
 }
