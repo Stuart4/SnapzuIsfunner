@@ -75,20 +75,16 @@ public class TreeViewConfiguration {
 
         Comment currentComment = comments[0];
         TreeNode currentNode = new TreeNode(comments[0]).setViewHolder(new TreeViewConfiguration.CommentHolder(context, post));
-
         root.addChild(currentNode);
 
         for (int i = 1; i < comments.length; i++) {
-            TreeNode toPlace = new TreeNode(comments[i]).setViewHolder(new TreeViewConfiguration.CommentHolder(context, post));
             if (currentComment.getIndent() < comments[i].getIndent()) {
-                currentNode.addChild(toPlace);
+                currentNode.addChild(new TreeNode(comments[i]).setViewHolder(new TreeViewConfiguration.CommentHolder(context, post)));
             } else {
                 for (int k = 0; k < currentComment.getIndent() - comments[i].getIndent(); k++)
                     currentNode = currentNode.getParent();
-                currentNode.getParent().addChild(toPlace);
+                currentNode.addChild(new TreeNode(comments[i]).setViewHolder(new TreeViewConfiguration.CommentHolder(context, post)));
             }
-            currentComment = comments[i];
-            currentNode = toPlace;
         }
 
         return new AndroidTreeView(context, root);
@@ -135,7 +131,7 @@ public class TreeViewConfiguration {
                     "<h1>%s</h1><br><font color=\"%s\">%s</font> • <b>%s</b> • %s",
                     titleString, colorString, voteString, userString, dateString)));
             title.setTextColor(context.getResources().getColor(R.color.primary_dark));
-            if (paragraphString != null) {
+            if (paragraph != null) {
                 paragraph.setText(Html.fromHtml(paragraphString));
             } else {
                 paragraph.setText("");
