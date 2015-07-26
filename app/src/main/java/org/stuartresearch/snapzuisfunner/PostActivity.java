@@ -410,11 +410,12 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     public void presentComments() {
-        AndroidTreeView treeView = TreeViewConfiguration.buildTreeView(this, post, comments);
+        boolean notExpanded = getCollapseSettings();
+        AndroidTreeView treeView = TreeViewConfiguration.buildTreeView(this, post, comments, notExpanded);
         commentContainer.addView(treeView.getView());
         treeView.setDefaultAnimation(false);
 
-        if (getCollapseSettings()) {
+        if (notExpanded) {
             treeView.collapseAll();
         } else {
             treeView.expandAll();
@@ -425,6 +426,5 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         return prefs.getBoolean(SETTINGS_COLLAPSE_ALL, false);
-
     }
 }

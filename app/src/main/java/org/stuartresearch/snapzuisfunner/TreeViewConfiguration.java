@@ -19,6 +19,8 @@ import com.unnamed.b.atv.view.AndroidTreeView;
 import org.stuartresearch.SnapzuAPI.Comment;
 import org.stuartresearch.SnapzuAPI.Post;
 
+import java.util.List;
+
 /**
  * Created by jake on 7/24/15.
  */
@@ -63,7 +65,7 @@ public class TreeViewConfiguration {
     }
 
 
-    public static AndroidTreeView buildTreeView(Context context, Post post, Comment[] comments) {
+    public static AndroidTreeView buildTreeView(Context context, Post post, Comment[] comments, boolean notExpanded) {
         TreeViewConfiguration.setColors(context);
         TreeNode root = TreeNode.root();
 
@@ -74,12 +76,12 @@ public class TreeViewConfiguration {
         }
 
         Comment currentComment = comments[0];
-        TreeNode currentNode = new TreeNode(comments[0]).setViewHolder(new TreeViewConfiguration.CommentHolder(context, post));
+        TreeNode currentNode = new TreeNode(comments[0]).setViewHolder(new TreeViewConfiguration.CommentHolder(context, post, notExpanded));
 
         root.addChild(currentNode);
 
         for (int i = 1; i < comments.length; i++) {
-            TreeNode toPlace = new TreeNode(comments[i]).setViewHolder(new TreeViewConfiguration.CommentHolder(context, post));
+            TreeNode toPlace = new TreeNode(comments[i]).setViewHolder(new TreeViewConfiguration.CommentHolder(context, post, notExpanded));
             if (currentComment.getIndent() < comments[i].getIndent()) {
                 currentNode.addChild(toPlace);
             } else {
@@ -96,7 +98,6 @@ public class TreeViewConfiguration {
 
 
     public static class PostHolder extends TreeNode.BaseNodeViewHolder<Post> {
-
         public PostHolder(Context context) {
             super(context);
         }
@@ -113,6 +114,7 @@ public class TreeViewConfiguration {
             TextView paragraph = (TextView) view.findViewById(R.id.comment_paragraph);
             ImageView userIcon = (ImageView) view.findViewById(R.id.userIcon);
             ImageView commentColor = (ImageView) view.findViewById(R.id.comment_color);
+            TextView commentChildren = (TextView) view.findViewById(R.id.comment_children);
             LinearLayout opBanner = (LinearLayout) view.findViewById(R.id.comment_title_banner);
             RelativeLayout commentCard = (RelativeLayout) view.findViewById(R.id.comment_card);
 
@@ -140,6 +142,8 @@ public class TreeViewConfiguration {
                 paragraph.setText("");
             }
 
+            commentChildren.setVisibility(View.GONE);
+
             opBanner.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
 
             userIcon.setVisibility(View.GONE);
@@ -155,9 +159,11 @@ public class TreeViewConfiguration {
 
     public static class CommentHolder extends TreeNode.BaseNodeViewHolder<Comment> {
         Post post;
-        public CommentHolder(Context context, Post post) {
+        boolean notExpanded;
+        public CommentHolder(Context context, Post post, boolean notExpanded) {
             super(context);
             this.post = post;
+            this.notExpanded = notExpanded;
         }
 
         @Override
@@ -172,6 +178,7 @@ public class TreeViewConfiguration {
             TextView paragraph = (TextView) view.findViewById(R.id.comment_paragraph);
             ImageView userIcon = (ImageView) view.findViewById(R.id.userIcon);
             ImageView commentColor = (ImageView) view.findViewById(R.id.comment_color);
+            TextView commentChildren = (TextView) view.findViewById(R.id.comment_children);
             LinearLayout opBanner = (LinearLayout) view.findViewById(R.id.comment_title_banner);
             RelativeLayout commentCard = (RelativeLayout) view.findViewById(R.id.comment_card);
 
@@ -183,7 +190,7 @@ public class TreeViewConfiguration {
             String dateString = comment.getDate();
             String iconString = comment.getImageLink();
             Spanned paragraphSpanned = Html.fromHtml(comment.getParagraph());
-            String voteColorString = "#D32F2F";
+            String voteColorString = "#D50000";
             int indentValue = comment.getIndent();
             int commentColorValue = context.getResources().getColor(android.R.color.transparent);
 
@@ -195,7 +202,7 @@ public class TreeViewConfiguration {
             }
 
             if (!voteString.isEmpty() && Float.parseFloat(voteString) > 0) {
-                voteColorString = "#1976D2";
+                voteColorString = "#2962FF";
             }
 
             if (post.getUser().equals(comment.getUser())) {
@@ -210,6 +217,19 @@ public class TreeViewConfiguration {
                 opBanner.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
             }
 
+            if (comment.getNumChildren() != 0) {
+                commentChildren.setText("+" + comment.getNumChildren());
+
+                if (notExpanded) {
+                    commentChildren.setVisibility(View.VISIBLE);
+                } else {
+                    commentChildren.setVisibility(View.GONE);
+                }
+            } else {
+                commentChildren.setVisibility(View.GONE);
+            }
+
+
 
             paragraph.setText(paragraphSpanned.subSequence(0, paragraphSpanned.length() - 2));
             commentColor.setBackgroundColor(commentColorValue);
@@ -222,6 +242,20 @@ public class TreeViewConfiguration {
             if (!iconString.isEmpty()) {
                 Glide.with(context).load(iconString).fitCenter().into(userIcon);
             }
+
+            treeNode.setClickListener((node, object) -> {
+                List<TreeNode> children =  node.getChildren();
+                if (children.isEmpty()) {
+                    return;
+                }
+               if (node.isExpanded()) {
+                   children.get(0).setExpanded(false);
+                   commentChildren.setVisibility(View.VISIBLE);
+               } else {
+                   children.get(0).setExpanded(true);
+                   commentChildren.setVisibility(View.GONE);
+               }
+            });
 
             return view;
         }
