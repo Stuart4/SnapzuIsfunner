@@ -5,11 +5,11 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -111,11 +111,10 @@ public class TreeViewConfiguration {
 
             TextView title = (TextView) view.findViewById(R.id.comment_title);
             TextView paragraph = (TextView) view.findViewById(R.id.comment_paragraph);
-            ImageView indent = (ImageView) view.findViewById(R.id.comment_indent);
-            ImageView postIndent = (ImageView) view.findViewById(R.id.post_padding);
             ImageView userIcon = (ImageView) view.findViewById(R.id.userIcon);
             ImageView commentColor = (ImageView) view.findViewById(R.id.comment_color);
             LinearLayout opBanner = (LinearLayout) view.findViewById(R.id.comment_title_banner);
+            RelativeLayout commentCard = (RelativeLayout) view.findViewById(R.id.comment_card);
 
             title.setTextAppearance(context, titleStyle);
             paragraph.setTextAppearance(context, paragraphStyle);
@@ -146,9 +145,9 @@ public class TreeViewConfiguration {
             userIcon.setVisibility(View.GONE);
             commentColor.setVisibility(View.GONE);
 
-            postIndent.setVisibility(View.VISIBLE);
-            indent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0f, view.getResources().getDisplayMetrics()) + 0.5f);
-            indent.requestLayout();
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+            lp.setMargins(30, 30, 30, 30);
+            commentCard.setLayoutParams(lp);
 
             return view;
         }
@@ -171,11 +170,10 @@ public class TreeViewConfiguration {
 
             TextView title = (TextView) view.findViewById(R.id.comment_title);
             TextView paragraph = (TextView) view.findViewById(R.id.comment_paragraph);
-            ImageView indent = (ImageView) view.findViewById(R.id.comment_indent);
-            ImageView postIndent = (ImageView) view.findViewById(R.id.post_padding);
             ImageView userIcon = (ImageView) view.findViewById(R.id.userIcon);
             ImageView commentColor = (ImageView) view.findViewById(R.id.comment_color);
             LinearLayout opBanner = (LinearLayout) view.findViewById(R.id.comment_title_banner);
+            RelativeLayout commentCard = (RelativeLayout) view.findViewById(R.id.comment_card);
 
             title.setTextAppearance(context, titleStyle);
             paragraph.setTextAppearance(context, paragraphStyle);
@@ -216,9 +214,10 @@ public class TreeViewConfiguration {
             paragraph.setText(paragraphSpanned.subSequence(0, paragraphSpanned.length() - 2));
             commentColor.setBackgroundColor(commentColorValue);
 
-            postIndent.setVisibility(View.GONE);
-            indent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) indentValue * 6, context.getResources().getDisplayMetrics()) + 0.5f);
-            userIcon.setVisibility(View.VISIBLE);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+            lp.setMargins(comment.getIndent() * 15, 1, 1, 1);
+            commentCard.setLayoutParams(lp);
+
 
             if (!iconString.isEmpty()) {
                 Glide.with(context).load(iconString).fitCenter().into(userIcon);

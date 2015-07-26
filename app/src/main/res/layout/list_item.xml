@@ -4,19 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="1dp">
+    android:padding="1dp"
+    android:id="@+id/comment_card">
 
     <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:id="@+id/comment_indent"
-            android:src="@color/primary_light"/>
 
         <ImageView
-            android:layout_width="3dp"
+            android:layout_width="6dp"
             android:layout_height="match_parent"
             android:id="@+id/comment_color" />
 
@@ -56,14 +52,6 @@
                 android:id="@+id/comment_paragraph"
                 style="@style/TextCommentParagraphMedium" />
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="15dp"
-                android:id="@+id/post_padding"
-                android:layout_margin="0dp"
-                android:padding="0dp"
-                android:visibility="gone"
-                android:src="@color/primary_light"/>
 
         </LinearLayout>
 
