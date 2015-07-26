@@ -18,13 +18,6 @@
         android:entries="@array/font_sizes"
         android:entryValues="@array/font_sizes" />
 
-    <CheckBoxPreference
-        android:title="Collapse All Comments"
-        android:summary="When showing comments, start will all of them collapsed"
-        android:icon="@drawable/ic_more_black_24dp"
-        android:defaultValue="false"
-        android:key="setting_collapse_all" />
-
     <Preference
         android:title="Rate The App"
         android:summary="Help others discover Tapzu"
