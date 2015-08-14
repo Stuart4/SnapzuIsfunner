@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    
+
     <!-- Base application theme. -->
     <style name="AppTheme" parent="MaterialDrawerTheme.Light">
         <item name="windowActionBar">false</item>
@@ -81,7 +81,8 @@
         <item name="android:textSize">14sp</item>
         <item name="android:typeface">normal</item>
         <item name="android:textColor">@color/md_grey_600</item>
-        <item name="android:paddingLeft">5dp</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
 
     <style name="TextCommentTitleSmall" parent="TextCommentTitleMedium">
@@ -89,6 +90,27 @@
     </style>
 
     <style name="TextCommentTitleLarge" parent="TextCommentTitleMedium">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="TextCommentHiddenMedium" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textSize">14sp</item>
+        <item name="android:typeface">normal</item>
+        <item name="android:textColor">@color/icons</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:background">@drawable/hidden_banner</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+
+    </style>
+
+    <style name="TextCommentHiddentSmall" parent="TextCommentHiddenMedium">
+        <item name="android:textSize">8sp</item>
+    </style>
+
+    <style name="TextCommentHiddenLarge" parent="TextCommentHiddenMedium">
         <item name="android:textSize">20sp</item>
     </style>
 
@@ -106,5 +128,6 @@
     <style name="TextCommentParagraphSmall" parent="TextCommentParagraphMedium">
         <item name="android:textSize">8sp</item>
     </style>
+
 
 </resources>

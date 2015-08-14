@@ -15,6 +15,7 @@ import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,9 @@ import org.parceler.Parcel;
 import org.parceler.Parcels;
 import org.stuartresearch.SnapzuAPI.Comment;
 import org.stuartresearch.SnapzuAPI.Post;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -47,6 +51,7 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
     Post post;
     Comment[] comments;
+    ArrayList<Comment> commentList;
 
     MenuItem arrowBackUp;
     MenuItem arrowForwardDown;
@@ -257,7 +262,8 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
     @Subscribe
     public void onCommentsReceive(PopulateComments.CommentsPackage commentsPackage) {
         this.comments = commentsPackage.comments;
-        mListAdapter = new ListAdapter(this, R.layout.list_item, comments, post);
+        commentList = new ArrayList (Arrays.asList(comments));
+        mListAdapter = new ListAdapter(this, R.layout.list_item, commentList, post);
         gridView.setAdapter(mListAdapter);
         mListAdapter.notifyDataSetChanged();
     }
@@ -282,8 +288,12 @@ public class PostActivity extends AppCompatActivity implements View.OnTouchListe
 
     // ON COMMENT SELECTED
     @OnItemClick(R.id.comment_grid_view)
-    public void commentSelected(int position) {
-        Toast.makeText(this, "Comment selection is not implemented", Toast.LENGTH_SHORT).show();
+    public void commentSelected(AdapterView<?> parent, View view, int position, long id) {
+        for (int i = 0; i < commentList.get(position).getNumChildren(); i++) {
+            commentList.remove(position); // top fake post makes it position + 1 - 1
+        }
+        mListAdapter.notifyDataSetChanged();
+        Toast.makeText(view.getContext(), Integer.toString(commentList.get(position).getNumChildren()), Toast.LENGTH_SHORT).show();
     }
 
     public void toggleFullScreen() {

@@ -5,19 +5,21 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
 import org.stuartresearch.SnapzuAPI.Comment;
 import org.stuartresearch.SnapzuAPI.Post;
+
+import java.util.List;
 
 /**
  * Created by jake on 7/7/15.
@@ -34,13 +36,13 @@ public class ListAdapter extends ArrayAdapter<Comment> {
     private int paragraphStyle;
 
     private final LayoutInflater mLayoutInflater;
-    private Comment[] objects;
+    private List<Comment> objects;
     private int layoutResource;
     private Post post;
 
     private int[] colors;
 
-    public ListAdapter(Context context, int resource, Comment[] objects, Post post) {
+    public ListAdapter(Context context, int resource, List<Comment> objects, Post post) {
         super(context, resource, objects);
         this.layoutResource = resource;
         this.objects = objects;
@@ -50,13 +52,12 @@ public class ListAdapter extends ArrayAdapter<Comment> {
     }
 
     static class ViewHolder {
-        ImageView indent;
-        ImageView postIndent;
         ImageView userIcon;
         ImageView commentColor;
         TextView title;
         TextView paragraph;
         LinearLayout opBanner;
+        RelativeLayout commentCard;
     }
 
     @Override
@@ -69,6 +70,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
+            convertView.setVisibility(View.VISIBLE);
         }
 
         Context context = convertView.getContext();
@@ -77,8 +79,6 @@ public class ListAdapter extends ArrayAdapter<Comment> {
 
         viewHolder.title = (TextView) convertView.findViewById(R.id.comment_title);
         viewHolder.paragraph = (TextView) convertView.findViewById(R.id.comment_paragraph);
-        viewHolder.indent = (ImageView) convertView.findViewById(R.id.comment_indent);
-        viewHolder.postIndent = (ImageView) convertView.findViewById(R.id.post_padding);
         viewHolder.userIcon = (ImageView) convertView.findViewById(R.id.userIcon);
         viewHolder.commentColor = (ImageView) convertView.findViewById(R.id.comment_color);
         viewHolder.opBanner = (LinearLayout) convertView.findViewById(R.id.comment_title_banner);
@@ -113,14 +113,14 @@ public class ListAdapter extends ArrayAdapter<Comment> {
             viewHolder.userIcon.setVisibility(View.GONE);
             viewHolder.commentColor.setVisibility(View.GONE);
 
-            viewHolder.postIndent.setVisibility(View.VISIBLE);
-            viewHolder.indent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 0f, convertView.getResources().getDisplayMetrics()) + 0.5f);
-            viewHolder.indent.requestLayout();
+//            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+//            lp.setMargins(30, 30, 30, 30);
+//            viewHolder.commentCard.setLayoutParams(lp);
 
             return convertView;
         }
 
-        Comment object = objects[position - 1];
+        Comment object = objects.get(position - 1);
         String user = object.getUser();
         String vote = object.getVote();
         String date = object.getDate();
@@ -157,9 +157,13 @@ public class ListAdapter extends ArrayAdapter<Comment> {
         viewHolder.paragraph.setText(paragraph.subSequence(0, paragraph.length() - 2));
         viewHolder.commentColor.setBackgroundColor(commentColor);
 
-        viewHolder.postIndent.setVisibility(View.GONE);
-        viewHolder.indent.getLayoutParams().width = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) indent * 6, convertView.getResources().getDisplayMetrics()) + 0.5f);
-        viewHolder.indent.requestLayout();
+//        final float scale = getContext().getResources().getDisplayMetrics().density;
+//        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+//                LinearLayout.LayoutParams.MATCH_PARENT,
+//                LinearLayout.LayoutParams.MATCH_PARENT);
+//        params.setMargins((int) (scale * indent * 5 + 0.5f), 1, 1, 1);
+//        viewHolder.commentCard.setLayoutParams(params);
+
 
         viewHolder.userIcon.setVisibility(View.VISIBLE);
 
@@ -172,7 +176,7 @@ public class ListAdapter extends ArrayAdapter<Comment> {
 
     @Override
     public int getCount() {
-        return objects.length + 1;
+        return objects.size() + 1;
     }
 
     private void getStyles(Context context) {
